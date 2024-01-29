@@ -178,7 +178,6 @@ int Application::Run() {
     while (!glfwWindowShouldClose(m_Window)) {
         processInput(m_Window);
 
-
         /* Modify vertex data here */
         vertices[0].Color = glm::vec4(slider, 1.0f);
 
