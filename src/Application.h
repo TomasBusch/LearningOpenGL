@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Renderer.h"
+#include "Camera.h"
 
 class Application {
 private:
@@ -12,6 +13,7 @@ private:
 	unsigned int m_Width;
 	unsigned int m_Height;
 
+	Camera m_Camera;
 	Renderer m_Renderer;
 public:
 	Application();
@@ -21,7 +23,7 @@ public:
 	int Run();
 private:
 	void processInput(GLFWwindow* window);
-
+	void updateViewportSize(int width, int height);
 	void ImGUIMenu(glm::vec3& slider);
 };
 

@@ -12,9 +12,12 @@ out vec2 v_UV;
 out float v_TextureID;
 
 uniform mat4 u_MVP;
+uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat4 u_Projection;
 
 void main() {
-   gl_Position = u_MVP * Position;
+   gl_Position = u_Projection * u_View * u_Model * Position;
    //gl_Position = Position;
    v_Color = Color;
    v_Normal = Normal;

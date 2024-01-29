@@ -12,17 +12,17 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 Application::Application()
-    : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer())
+    : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer()), m_Camera(Camera(960, 512))
 {
 }
 
 Application::Application(const std::string GLSL_Version, unsigned int width, unsigned int height) 
-	: m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer())
+	: m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer()), m_Camera(Camera(width, height))
 {
 }
 
 Application::Application(const std::string GLSL_Version, unsigned int width, unsigned int height, const std::string windowName)
-    : m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer())
+    : m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer()), m_Camera(Camera(width, height))
 {
     Init(windowName);
 }
@@ -121,40 +121,52 @@ int Application::Run() {
 
     Shader* m_Shader = new Shader("res/shaders/basic");
 
-    Texture* texture1 = new Texture("res/textures/wooden_garage_door/wooden_garage_door_diff_2k.jpg");
-    Texture* texture2 = new Texture("res/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg");
+    Texture* texture1 = new Texture("res/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg");
+    Texture* texture2 = new Texture("res/textures/wooden_garage_door/wooden_garage_door_diff_2k.jpg");
 
     texture1->Bind(0);
     texture2->Bind(1);
     int samplers[2] = { 0, 1 };
     m_Shader->SetUniform1iv("u_Textures", 2, samplers);
 
-    glm::mat4 ortho_proj_Matrix = glm::ortho(0.0f, (float)m_Width, 0.0f, (float)m_Height, 0.1f, 100000.0f);
-    glm::mat4 perspective_proj_Matrix = glm::perspective(glm::radians(45.0f), (float)m_Width / (float)m_Height, 0.1f, 100000.0f);
+    glm::mat4 model_Matrix = glm::mat4(1.0f);
 
-    glm::mat4 view_Matrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5000.0f));
+    glm::vec3 translationA(0, 0, 0.0f);
+    model_Matrix = glm::translate(model_Matrix, translationA);
+    model_Matrix = glm::scale(model_Matrix, glm::vec3(100, 100, 100));
+    model_Matrix = glm::rotate(model_Matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
-    glm::vec3 translationA(m_Width/2, m_Height/2, -10.0f);
-    glm::mat4 model_Matrix = glm::translate(glm::mat4(1.0f), translationA);
-    model_Matrix = glm::scale(model_Matrix, glm::vec3(1000, 1000, 0));
-    model_Matrix = glm::rotate(model_Matrix, glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-
-    glm::mat4 mvp_Matrix = perspective_proj_Matrix * view_Matrix * model_Matrix;
-
-    m_Shader->SetUniformMat4f("u_MVP", mvp_Matrix);
+    m_Shader->SetUniformMat4f("u_Model", model_Matrix);
 
 
-    auto framebuffer_size_callback = [](GLFWwindow* window, int width, int height)
-        {
-            glViewport(0, 0, width, height);
-        };
+    glfwSetWindowUserPointer(m_Window, this);
+
+    auto framebuffer_size_callback = [](GLFWwindow* window, int width, int height) {
+        Application* instance = (Application*)glfwGetWindowUserPointer(window);
+        instance->updateViewportSize(width, height);
+        instance->m_Camera.setViewportSize(width, height);
+        glViewport(0, 0, width, height);
+    };
+
+    auto mouse_callback = [](GLFWwindow* window, double xposIn, double yposIn) {
+        Application* instance = (Application*)glfwGetWindowUserPointer(window);
+        instance->m_Camera.mouse_callback(window, xposIn, yposIn);
+    };
+
+    auto scroll_callback = [](GLFWwindow* window, double xoffset, double yoffset) {
+        Application* instance = (Application*)glfwGetWindowUserPointer(window);
+        instance->m_Camera.scroll_callback(window, xoffset, yoffset);
+    };
     glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(m_Window, mouse_callback);
+    glfwSetScrollCallback(m_Window, scroll_callback);
     
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glm::vec3 slider = glm::vec3(0.0f, 0.0f, 0.0f);
 
     while (!glfwWindowShouldClose(m_Window)) {
+
         processInput(m_Window);
 
         /* Modify vertex data here */
@@ -170,7 +182,9 @@ int Application::Run() {
 
         m_Renderer.Clear();
 
-        /* Rebind vao in case layout has changed */
+        m_Shader->SetUniformMat4f("u_Projection", m_Camera.getProjectionMatrix());
+        m_Shader->SetUniformMat4f("u_View", m_Camera.getViewMatrix());
+
         m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 
         ImGUIMenu(slider);
@@ -192,6 +206,23 @@ int Application::Run() {
 void Application::processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+        m_Camera.toggleLock();
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        m_Camera.processKeyboard(FORWARD, 1.0f);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        m_Camera.processKeyboard(BACKWARD, 1.0f);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        m_Camera.processKeyboard(LEFT, 1.0f);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        m_Camera.processKeyboard(RIGHT, 1.0f);
+}
+
+void Application::updateViewportSize(int width, int height) {
+    m_Width = width;
+    m_Height = height;
 }
 
 void Application::ImGUIMenu(glm::vec3& slider) {
@@ -201,7 +232,7 @@ void Application::ImGUIMenu(glm::vec3& slider) {
 
     static int counter = 0;
 
-    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+    ImGui::Begin("Controls");                          // Create a window.
 
     ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
