@@ -4,10 +4,12 @@
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/backends/imgui_impl_glfw.h"
-#include "vendor/imgui/backends/imgui_impl_opengl3.h"\
+#include "vendor/imgui/backends/imgui_impl_opengl3.h"
 
 #include "Mesh.h"
 #include "Texture.h"
+
+#include "glm/gtc/matrix_transform.hpp"
 
 Application::Application()
     : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer())
@@ -77,16 +79,18 @@ int Application::Init(const std::string windowName) {
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GLCall(glBlendEquation(GL_FUNC_ADD));
 
+    GLCall(glEnable(GL_DEPTH_TEST));
+
     return 0;
 }
 
 int Application::Run() {
 
     Vertex vertices[4] = {
-        {glm::vec3(-0.5, -0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)},
-        {glm::vec3( 0.5, -0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 0.0f), glm::float32(0)},
-        {glm::vec3( 0.5,  0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 2.0f), glm::float32(0)},
-        {glm::vec3(-0.5,  0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 2.0f), glm::float32(0)},
+        {glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)},
+        {glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 0.0f), glm::float32(0)},
+        {glm::vec3( 0.5f,  0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 2.0f), glm::float32(0)},
+        {glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 2.0f), glm::float32(0)},
     };
 
     unsigned int indices[6] = {
@@ -115,10 +119,6 @@ int Application::Run() {
     IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, 6);
     //IndexBuffer* m_IndexBuffer = new IndexBuffer(indices, 6);
 
-    unsigned int va;
-    glGenVertexArrays(1, &va);
-    glBindVertexArray(va);
-
     Shader* m_Shader = new Shader("res/shaders/basic");
 
     Texture* texture1 = new Texture("res/textures/wooden_garage_door/wooden_garage_door_diff_2k.jpg");
@@ -128,6 +128,20 @@ int Application::Run() {
     texture2->Bind(1);
     int samplers[2] = { 0, 1 };
     m_Shader->SetUniform1iv("u_Textures", 2, samplers);
+
+    glm::mat4 ortho_proj_Matrix = glm::ortho(0.0f, (float)m_Width, 0.0f, (float)m_Height, 0.1f, 100000.0f);
+    glm::mat4 perspective_proj_Matrix = glm::perspective(glm::radians(45.0f), (float)m_Width / (float)m_Height, 0.1f, 100000.0f);
+
+    glm::mat4 view_Matrix = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -5000.0f));
+
+    glm::vec3 translationA(m_Width/2, m_Height/2, -10.0f);
+    glm::mat4 model_Matrix = glm::translate(glm::mat4(1.0f), translationA);
+    model_Matrix = glm::scale(model_Matrix, glm::vec3(1000, 1000, 0));
+    model_Matrix = glm::rotate(model_Matrix, glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+
+    glm::mat4 mvp_Matrix = perspective_proj_Matrix * view_Matrix * model_Matrix;
+
+    m_Shader->SetUniformMat4f("u_MVP", mvp_Matrix);
 
 
     auto framebuffer_size_callback = [](GLFWwindow* window, int width, int height)
@@ -157,7 +171,6 @@ int Application::Run() {
         m_Renderer.Clear();
 
         /* Rebind vao in case layout has changed */
-        glBindVertexArray(va);
         m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 
         ImGUIMenu(slider);

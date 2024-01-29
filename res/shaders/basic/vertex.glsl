@@ -6,18 +6,18 @@ layout(location = 2) in vec3 Normal;
 layout(location = 3) in vec2 UV;
 layout(location = 4) in float TextureID;
 
-out vec4 o_Color;
-out vec3 o_Normal;
-out vec2 o_UV;
-out float o_TextureID;
+out vec4 v_Color;
+out vec3 v_Normal;
+out vec2 v_UV;
+out float v_TextureID;
 
 uniform mat4 u_MVP;
 
 void main() {
-   //gl_Position = u_MVP * Position;
-   gl_Position = Position;
-   o_Color = Color;
-   o_Normal = Normal;
-   o_UV = UV;
-   o_TextureID = TextureID;
+   gl_Position = u_MVP * Position;
+   //gl_Position = Position;
+   v_Color = Color;
+   v_Normal = Normal;
+   v_UV = UV;
+   v_TextureID = TextureID;
 };
