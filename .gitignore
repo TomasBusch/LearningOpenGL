@@ -17,6 +17,7 @@
 mono_crash.*
 
 # Build results
+[Bb]uild/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -85,6 +86,7 @@ StyleCopReport.xml
 *.rsp
 *.sbr
 *.tlb
+*.tlog
 *.tli
 *.tlh
 *.tmp

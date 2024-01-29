@@ -10,19 +10,17 @@
 #include "Texture.h"
 
 Application::Application()
-    : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512)
+    : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer())
 {
-
 }
 
 Application::Application(const std::string GLSL_Version, unsigned int width, unsigned int height) 
-	: m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height)
+	: m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer())
 {
-    
 }
 
 Application::Application(const std::string GLSL_Version, unsigned int width, unsigned int height, const std::string windowName)
-    : m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height)
+    : m_GLSL_Version(GLSL_Version), m_Window(nullptr), m_Width(width), m_Height(height), m_Renderer(Renderer())
 {
     Init(windowName);
 }
@@ -84,14 +82,6 @@ int Application::Init(const std::string windowName) {
 
 int Application::Run() {
 
-    /* Define Vertex postions */
-    //float vertex[] = {
-    //    -50.0f, -50.0f, 0.0f, 0.0f, //0
-    //     50.0f, -50.0f, 1.0f, 0.0f, //1
-    //     50.0f,  50.0f, 1.0f, 1.0f, //2
-    //    -50.0f,  50.0f, 0.0f, 1.0f  //3
-    //};
-
     Vertex vertices[4] = {
         {glm::vec3(-0.5, -0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)},
         {glm::vec3( 0.5, -0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 0.0f), glm::float32(0)},
@@ -99,62 +89,37 @@ int Application::Run() {
         {glm::vec3(-0.5,  0.5, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 2.0f), glm::float32(0)},
     };
 
-    unsigned int indices[] = {
+    unsigned int indices[6] = {
         0, 1, 2,
         2, 3, 0
     };
 
-    ///* Init vertex array obj */
-    //VertexArray* m_VertexArray = new VertexArray();
-    ///* Create and asign data to vertex buffer */
+    /* Init vertex array obj */
+    VertexArray* m_VertexArray = new VertexArray();
+    /* Create and asign data to vertex buffer */
+    VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, 4 * sizeof(Vertex));
     //VertexBuffer* m_VertexBuffer = new VertexBuffer(vertices, 4 * sizeof(Vertex));
-
-    ///* Init vertex layout */
-    //VertexBufferLayout* m_VertexBufferLayout = new VertexBufferLayout();
-    //
-    ///* Create layout */
-    //m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Position));
-    //m_VertexBufferLayout->Push<glm::vec4>(1, (const void*)offsetof(Vertex, Color));
-    //m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Normal));
-    //m_VertexBufferLayout->Push<glm::vec2>(1, (const void*)offsetof(Vertex, UV));
-    //m_VertexBufferLayout->Push<glm::float32>(1, (const void*)offsetof(Vertex, TextureID));
+    /* Init vertex layout */
+    VertexBufferLayout* m_VertexBufferLayout = new VertexBufferLayout();
+    /* Create layout */
+    m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Position));
+    m_VertexBufferLayout->Push<glm::vec4>(1, (const void*)offsetof(Vertex, Color));
+    m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Normal));
+    m_VertexBufferLayout->Push<glm::vec2>(1, (const void*)offsetof(Vertex, UV));
+    m_VertexBufferLayout->Push<glm::float32>(1, (const void*)offsetof(Vertex, TextureID));
 
     /* Bind vertex buffer to layout */
-    //m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
+    m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 
     /* Create and asign data to vertex index buffer */
+    IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, 6);
     //IndexBuffer* m_IndexBuffer = new IndexBuffer(indices, 6);
 
     unsigned int va;
     glGenVertexArrays(1, &va);
     glBindVertexArray(va);
 
-    unsigned int vb;
-    glGenBuffers(1 ,&vb);
-    glBindBuffer(GL_ARRAY_BUFFER, vb);
-    glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), &vertices, GL_DYNAMIC_DRAW);
-
-    glEnableVertexArrayAttrib(vb, 0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, Position));
-
-    glEnableVertexArrayAttrib(vb, 1);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, Color));
-
-    glEnableVertexArrayAttrib(vb, 2);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, Normal));
-
-    glEnableVertexArrayAttrib(vb, 3);
-    glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, UV));
-
-    glEnableVertexArrayAttrib(vb, 4);
-    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const void*)offsetof(Vertex, TextureID));
-
-    unsigned int ib;
-    glGenBuffers(1, &ib);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_DYNAMIC_DRAW);
-
-    Shader* shader = new Shader("res/shaders/basic");
+    Shader* m_Shader = new Shader("res/shaders/basic");
 
     Texture* texture1 = new Texture("res/textures/wooden_garage_door/wooden_garage_door_diff_2k.jpg");
     Texture* texture2 = new Texture("res/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg");
@@ -162,7 +127,7 @@ int Application::Run() {
     texture1->Bind(0);
     texture2->Bind(1);
     int samplers[2] = { 0, 1 };
-    shader->SetUniform1iv("u_Textures", 2, samplers);
+    m_Shader->SetUniform1iv("u_Textures", 2, samplers);
 
 
     auto framebuffer_size_callback = [](GLFWwindow* window, int width, int height)
@@ -181,21 +146,19 @@ int Application::Run() {
         /* Modify vertex data here */
         vertices[0].Color = glm::vec4(slider, 1.0f);
 
-        /* Set dynamic Vertex Buffer */
-        glBindBuffer(GL_ARRAY_BUFFER, vb);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), &vertices);
+        /* Set dynamic Vertex Buffer Data*/
+        m_VertexBuffer->SetData(0, sizeof(vertices), vertices);
 
         /* Modify index data here */
 
-        /* Set dynamic Index Buffer */
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib);
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, sizeof(indices), &indices);
+        /* Set dynamic Index Buffer Data*/
+        m_IndexBuffer->SetData(0, sizeof(indices), indices);
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        m_Renderer.Clear();
 
         /* Rebind vao in case layout has changed */
         glBindVertexArray(va);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 
         ImGUIMenu(slider);
 

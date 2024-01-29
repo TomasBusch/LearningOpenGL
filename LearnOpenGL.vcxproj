@@ -73,26 +73,30 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\src\vendor;$(SolutionDir)\src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
+    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
     <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\src\vendor;$(SolutionDir)\src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
+    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
     <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\src\vendor;$(SolutionDir)\src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
+    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
     <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)\src\vendor;$(SolutionDir)\src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
+    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
     <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -491,8 +495,6 @@
   <ItemGroup>
     <None Include="res\shaders\basic\fragment.glsl" />
     <None Include="res\shaders\basic\vertex.glsl" />
-    <None Include="res\shaders\texture\fragment.glsl" />
-    <None Include="res\shaders\texture\vertex.glsl" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />
