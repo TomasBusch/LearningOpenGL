@@ -6,8 +6,8 @@ Camera::Camera(int width, int height)
 	:m_Position(glm::vec3(0.0f, 0.0f, 0.0f)), m_WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)), m_Yaw(-90.0f), m_Pitch(0.0f), m_Roll(0.0f),
 	m_Direction(glm::vec3(0.0f, 0.0f, -1.0f)), m_FirstMouse(true), m_MouseLastX(0), m_MouseLastY(0), m_MouseSensitivity(0.5f) , m_MouseZoom(45.0f),
 	m_ViewportWidth(width), m_ViewportHeight(height),
-	m_ProjectionMatrix(glm::mat4(1.0f)), m_ViewMatrix(glm::mat4(1.0f)), m_MVPMatrix(glm::mat4(1.0f))
-
+	m_ProjectionMatrix(glm::mat4(1.0f)), m_ViewMatrix(glm::mat4(1.0f)), m_MVPMatrix(glm::mat4(1.0f)),
+	m_Locked(false)
 {
 	m_CameraRight = glm::normalize(glm::cross(m_WorldUp, m_Direction));
 	m_CameraUp = glm::cross(m_Direction, m_CameraRight);
@@ -15,18 +15,11 @@ Camera::Camera(int width, int height)
 	m_ProjectionMatrix = glm::perspective(glm::radians(m_MouseZoom), (float)m_ViewportWidth / (float)m_ViewportHeight, 0.1f, 10000.0f);
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Direction, m_CameraUp);
 	m_MVPMatrix = m_ProjectionMatrix * m_ViewMatrix;
-}
 
-glm::mat4 Camera::getMVPMatrix() {
-	return m_MVPMatrix;
-}
-
-glm::mat4 Camera::getProjectionMatrix() {
-	return m_ProjectionMatrix;
-}
-
-glm::mat4 Camera::getViewMatrix() {
-	return m_ViewMatrix;
+	updateViewMatrix();
+	updateProjectionMatrix();
+	updateMVPMatrix();
+	updateCameraVectors();
 }
 
 void Camera::updateViewMatrix() {
@@ -42,25 +35,26 @@ void Camera::updateMVPMatrix() {
 }
 
 void Camera::processKeyboard(Camera_Movement movement, float deltaTime) {
-	std::cout << "processKeyboard" << std::endl;
+	if (!m_Locked) {
 
-	//float velocity = MovementSpeed * deltaTime;
-	float velocity = 10 * deltaTime;
-	if (movement == FORWARD)
-		m_Position += m_Direction * velocity;
-	if (movement == BACKWARD)
-		m_Position -= m_Direction * velocity;
-	if (movement == LEFT)
-		m_Position -= m_CameraRight * velocity;
-	if (movement == RIGHT)
-		m_Position += m_CameraRight * velocity;
+		//float velocity = MovementSpeed * deltaTime;
+		float velocity = 1 * deltaTime;
+		if (movement == FORWARD)
+			m_Position += m_Direction * velocity;
+		if (movement == BACKWARD)
+			m_Position -= m_Direction * velocity;
+		if (movement == LEFT)
+			m_Position -= m_CameraRight * velocity;
+		if (movement == RIGHT)
+			m_Position += m_CameraRight * velocity;
 
-	updateViewMatrix();
-	updateMVPMatrix();
+		updateViewMatrix();
+		updateMVPMatrix();
+	}
 }
 
 void Camera::processMouseMovement(float xoffset, float yoffset, bool constrainPitch = true) {
-	std::cout << "processMouseMovement" << std::endl;
+
 	xoffset *= m_MouseSensitivity;
 	yoffset *= m_MouseSensitivity;
 
@@ -118,11 +112,15 @@ void Camera::mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 		float xoffset = xpos - m_ViewportWidth / 2;
 		float yoffset = (m_ViewportHeight / 2) - ypos; // reversed since y-coordinates go from bottom to top
 
-		m_MouseLastX = xpos;
-		m_MouseLastY = ypos;
+		//Avoids jump in first move
+		if (m_FirstMouse) {
+			m_FirstMouse = false;
+		}
+		else {
+			processMouseMovement(xoffset, yoffset);
+		}
 
-		processMouseMovement(xoffset, yoffset);
-
+		//TODO GLFW_CURSOR_DISABLED should recenter the cursor automatically
 		glfwSetCursorPos(window, (float)m_ViewportWidth / 2, (float)m_ViewportHeight / 2);
 	}
 }
@@ -133,14 +131,22 @@ void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	}
 }
 
-void Camera::unlock() {
+void Camera::unlock(GLFWwindow* window) {
 	m_Locked = false;
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
-void Camera::lock() {
+void Camera::lock(GLFWwindow* window) {
 	m_Locked = true;
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void Camera::toggleLock() {
+void Camera::toggleLock(GLFWwindow* window) {
 	m_Locked = !m_Locked;
+	if (m_Locked) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 }

@@ -6,7 +6,7 @@
 #include "vendor/imgui/backends/imgui_impl_glfw.h"
 #include "vendor/imgui/backends/imgui_impl_opengl3.h"
 
-#include "Mesh.h"
+#include "Model.h"
 #include "Texture.h"
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -49,7 +49,7 @@ int Application::Init(const std::string windowName) {
     glfwMakeContextCurrent(m_Window);
 
     /* Sync framerate with vsync of monitor */
-    glfwSwapInterval(1);
+    glfwSwapInterval(0);
 
 
     if (glewInit() != GLEW_OK) {
@@ -80,28 +80,70 @@ int Application::Init(const std::string windowName) {
     GLCall(glBlendEquation(GL_FUNC_ADD));
 
     GLCall(glEnable(GL_DEPTH_TEST));
+    glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     return 0;
 }
 
 int Application::Run() {
 
-    Vertex vertices[4] = {
-        {glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)},
-        {glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 0.0f), glm::float32(0)},
-        {glm::vec3( 0.5f,  0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(2.0f, 2.0f), glm::float32(0)},
-        {glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 2.0f), glm::float32(0)},
+    Vertex vertices[24] = {
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //0
+        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //1
+        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //2
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //3
+                                                                                                                                                  
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //4
+        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //5
+        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //6
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //7
+                                                                                                                                                  
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //8
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //9
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //10
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //11
+                                                                                                                                                  
+        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //12
+        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //13
+        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //14
+        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //15
+                                                                                                                                                  
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //16
+        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //17
+        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //18
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //19
+                                                                                                                                                  
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //20
+        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //21
+        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //22
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //23
     };
 
-    unsigned int indices[6] = {
+    unsigned int indices[36] = {
+        3, 2, 0,
         0, 1, 2,
-        2, 3, 0
+
+        7, 6, 4,
+        4, 5, 6,
+
+        11, 10, 8,
+        8, 9, 10,
+
+        15, 14, 12,
+        12, 13, 14,
+
+        19, 18, 16,
+        16, 17, 18,
+
+        23, 22, 20,
+        20, 21, 22,
     };
 
     /* Init vertex array obj */
     VertexArray* m_VertexArray = new VertexArray();
     /* Create and asign data to vertex buffer */
-    VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, 4 * sizeof(Vertex));
+    VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, 24 * sizeof(Vertex));
     //VertexBuffer* m_VertexBuffer = new VertexBuffer(vertices, 4 * sizeof(Vertex));
     /* Init vertex layout */
     VertexBufferLayout* m_VertexBufferLayout = new VertexBufferLayout();
@@ -116,28 +158,27 @@ int Application::Run() {
     m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 
     /* Create and asign data to vertex index buffer */
-    IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, 6);
+    IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, 36);
     //IndexBuffer* m_IndexBuffer = new IndexBuffer(indices, 6);
 
     Shader* m_Shader = new Shader("res/shaders/basic");
 
-    Texture* texture1 = new Texture("res/textures/concrete_layers_02/concrete_layers_02_diff_2k.jpg");
-    Texture* texture2 = new Texture("res/textures/wooden_garage_door/wooden_garage_door_diff_2k.jpg");
+    Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
+    Texture* textureSpecular = new Texture("res/textures/test/container2_specular.png");
 
-    texture1->Bind(0);
-    texture2->Bind(1);
+    textureAlbedo->Bind(0);
+    textureSpecular->Bind(1);
     int samplers[2] = { 0, 1 };
     m_Shader->SetUniform1iv("u_Textures", 2, samplers);
 
     glm::mat4 model_Matrix = glm::mat4(1.0f);
 
-    glm::vec3 translationA(0, 0, 0.0f);
-    model_Matrix = glm::translate(model_Matrix, translationA);
-    model_Matrix = glm::scale(model_Matrix, glm::vec3(100, 100, 100));
-    model_Matrix = glm::rotate(model_Matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    //glm::vec3 translationA(0, 0, 0.0f);
+    //model_Matrix = glm::translate(model_Matrix, translationA);
+    //model_Matrix = glm::scale(model_Matrix, glm::vec3(100, 100, 100));
+    //model_Matrix = glm::rotate(model_Matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     m_Shader->SetUniformMat4f("u_Model", model_Matrix);
-
 
     glfwSetWindowUserPointer(m_Window, this);
 
@@ -164,10 +205,33 @@ int Application::Run() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glm::vec3 slider = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec4 ambientLightColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+    glm::vec4 pointLightColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+
+    glm::vec3 pointLightPos = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    m_Shader->SetUniform4f("u_AmbientLight", ambientLightColor);
+    m_Shader->SetUniform3f("u_PointLightPos", pointLightPos);
+    m_Shader->SetUniform4f("u_PointLight", pointLightColor);
+
+    float deltaTime = 0.0f;	// Time between current frame and last frame
+    float lastFrame = 0.0f; // Time of last frame
+    auto key_callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+        Application* instance = (Application*)glfwGetWindowUserPointer(window);
+        if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) {
+            instance->m_Camera.toggleLock(window);
+        }
+    };
+
+    glfwSetKeyCallback(m_Window, key_callback);
+
 
     while (!glfwWindowShouldClose(m_Window)) {
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 
-        processInput(m_Window);
+        processInput(m_Window, deltaTime);
 
         /* Modify vertex data here */
         vertices[0].Color = glm::vec4(slider, 1.0f);
@@ -184,6 +248,7 @@ int Application::Run() {
 
         m_Shader->SetUniformMat4f("u_Projection", m_Camera.getProjectionMatrix());
         m_Shader->SetUniformMat4f("u_View", m_Camera.getViewMatrix());
+        m_Shader->SetUniform3f("u_ViewPos", m_Camera.getPosition());
 
         m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 
@@ -203,21 +268,18 @@ int Application::Run() {
     return 0;
 }
 
-void Application::processInput(GLFWwindow* window) {
+void Application::processInput(GLFWwindow* window, float deltaTime) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
-        m_Camera.toggleLock();
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        m_Camera.processKeyboard(FORWARD, 1.0f);
+        m_Camera.processKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        m_Camera.processKeyboard(BACKWARD, 1.0f);
+        m_Camera.processKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        m_Camera.processKeyboard(LEFT, 1.0f);
+        m_Camera.processKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        m_Camera.processKeyboard(RIGHT, 1.0f);
+        m_Camera.processKeyboard(RIGHT, deltaTime);
 }
 
 void Application::updateViewportSize(int width, int height) {

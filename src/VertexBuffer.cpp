@@ -1,7 +1,7 @@
 #include "VertexBuffer.h"
 
 #include "Common.h"
-#include "Mesh.h"
+#include "Model.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
     /* Generate and bind vertex buffer */

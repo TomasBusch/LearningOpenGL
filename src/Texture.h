@@ -1,10 +1,12 @@
 #pragma once
 
 #include "Common.h"
+#include "Image.h"
 #include <string>
 
 class Texture {
 private:
+	Image m_Image;
 	unsigned int m_RendererID;
 	std::string m_FilePath;
 	unsigned char* m_LocalBuffer;

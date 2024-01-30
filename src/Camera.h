@@ -47,9 +47,22 @@ private:
 
 public:
 	Camera(int width, int height);
-	glm::mat4 getViewMatrix();
-	glm::mat4 getProjectionMatrix();
-	glm::mat4 getMVPMatrix();
+
+	glm::mat4 getMVPMatrix() {
+		return m_MVPMatrix;
+	}
+
+	glm::mat4 getProjectionMatrix() {
+		return m_ProjectionMatrix;
+	}
+
+	glm::mat4 getViewMatrix() {
+		return m_ViewMatrix;
+	}
+	glm::vec3 getPosition() {
+		return m_Position;
+	}
+
 	void processKeyboard(Camera_Movement direction, float deltaTime);
 	void processMouseMovement(float xoffset, float yoffset, bool constrainPitch);
 	void ProcessMouseScroll(float yoffset);
@@ -60,9 +73,9 @@ public:
 	void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-	void unlock();
-	void lock();
-	void toggleLock();
+	void unlock(GLFWwindow* window);
+	void lock(GLFWwindow* window);
+	void toggleLock(GLFWwindow* window);
 
 private:
 	void updateViewMatrix();

@@ -22,7 +22,7 @@ public:
 	int Init(const std::string windowName);
 	int Run();
 private:
-	void processInput(GLFWwindow* window);
+	void processInput(GLFWwindow* window, float deltaTime);
 	void updateViewportSize(int width, int height);
 	void ImGUIMenu(glm::vec3& slider);
 };

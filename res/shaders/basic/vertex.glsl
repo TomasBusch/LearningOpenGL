@@ -6,6 +6,7 @@ layout(location = 2) in vec3 Normal;
 layout(location = 3) in vec2 UV;
 layout(location = 4) in float TextureID;
 
+out vec3 v_FragPos;
 out vec4 v_Color;
 out vec3 v_Normal;
 out vec2 v_UV;
@@ -23,4 +24,6 @@ void main() {
    v_Normal = Normal;
    v_UV = UV;
    v_TextureID = TextureID;
+   //v_FragPos = vec3(u_Model * Position);
+   v_FragPos = vec3(Position);
 };
