@@ -72,7 +72,7 @@ unsigned int Shader::GetUniformLocation(const std::string& name) {
  
 
 unsigned int Shader::CompileShader(unsigned int type, const std::string& source) {
-    unsigned int id = glCreateShader(type);
+    GLCall(unsigned int id = glCreateShader(type));
     const char* src = source.c_str();
     GLCall(glShaderSource(id, 1, &src, nullptr));
     GLCall(glCompileShader(id));

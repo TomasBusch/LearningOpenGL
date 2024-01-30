@@ -59,8 +59,13 @@ public:
 	glm::mat4 getViewMatrix() {
 		return m_ViewMatrix;
 	}
+
 	glm::vec3 getPosition() {
 		return m_Position;
+	}
+	
+	glm::vec3 getDirection() {
+		return m_Direction;
 	}
 
 	void processKeyboard(Camera_Movement direction, float deltaTime);

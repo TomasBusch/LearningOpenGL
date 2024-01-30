@@ -4,6 +4,8 @@
 #include "Image.h"
 #include <string>
 
+//TODO add bound slot member var
+
 class Texture {
 private:
 	Image m_Image;

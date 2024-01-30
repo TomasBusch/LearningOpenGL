@@ -168,15 +168,39 @@ int Application::Run() {
 
     textureAlbedo->Bind(0);
     textureSpecular->Bind(1);
-    int samplers[2] = { 0, 1 };
-    m_Shader->SetUniform1iv("u_Textures", 2, samplers);
+    m_Shader->SetUniform1i("material.diffuse", 0);
+    m_Shader->SetUniform1i("material.specular", 1);
+    m_Shader->SetUniform1f("material.shininess", 32.0f);
+
+    m_Shader->SetUniform3f("DirectionalLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    m_Shader->SetUniform3f("DirectionalLight.ambient"  , glm::vec3( 0.2f,  0.2f,  0.2f));
+    m_Shader->SetUniform3f("DirectionalLight.diffuse"  , glm::vec3( 0.5f,  0.5f,  0.5f));
+    m_Shader->SetUniform3f("DirectionalLight.specular" , glm::vec3( 1.0f,  1.0f,  1.0f));
+
+    for (int i = 0; i < 4; i++) {
+        if (i == 0) {
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+        }
+        if (i == 1) {
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+        }
+        if (i == 2) {
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+        }
+        if (i == 3) {
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+        }
+        m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
+        m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
+        m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
+
+        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+
 
     glm::mat4 model_Matrix = glm::mat4(1.0f);
-
-    //glm::vec3 translationA(0, 0, 0.0f);
-    //model_Matrix = glm::translate(model_Matrix, translationA);
-    //model_Matrix = glm::scale(model_Matrix, glm::vec3(100, 100, 100));
-    //model_Matrix = glm::rotate(model_Matrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
     m_Shader->SetUniformMat4f("u_Model", model_Matrix);
 
@@ -209,10 +233,6 @@ int Application::Run() {
     glm::vec4 pointLightColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
     glm::vec3 pointLightPos = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    m_Shader->SetUniform4f("u_AmbientLight", ambientLightColor);
-    m_Shader->SetUniform3f("u_PointLightPos", pointLightPos);
-    m_Shader->SetUniform4f("u_PointLight", pointLightColor);
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -249,6 +269,19 @@ int Application::Run() {
         m_Shader->SetUniformMat4f("u_Projection", m_Camera.getProjectionMatrix());
         m_Shader->SetUniformMat4f("u_View", m_Camera.getViewMatrix());
         m_Shader->SetUniform3f("u_ViewPos", m_Camera.getPosition());
+
+        m_Shader->SetUniform3f("spotLight.position", m_Camera.getPosition());
+        m_Shader->SetUniform3f("spotLight.direction", m_Camera.getDirection());
+        m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+        m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+
+        m_Shader->SetUniform3f("spotLight.ambient",  glm::vec3(0.1f, 0.1f, 0.1f));
+        m_Shader->SetUniform3f("spotLight.diffuse",  glm::vec3(0.8f, 0.8f, 0.8f));
+        m_Shader->SetUniform3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+        m_Shader->SetUniform1f("spotLight.constant", 1.0f);
+        m_Shader->SetUniform1f("spotLight.linear", 0.09f);
+        m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
+
 
         m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 
