@@ -5,31 +5,32 @@
 #include <vector>
 #include <memory>
 #include "Texture.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 struct Vertex {
 	glm::vec3 Position;
 	glm::vec4 Color;
 	glm::vec3 Normal;
 	glm::vec2 UV;
-	glm::float32 TextureID;
+	glm::float32 MaterialID;
 };
 
 class Material {
 private:
 	std::unique_ptr<Image> m_Albedo;
 	std::unique_ptr<Image> m_Roughness;
-	std::unique_ptr<Image> m_Metallic;
+	std::unique_ptr<Image> m_Metalness;
 	std::unique_ptr<Image> m_HeightMap;
 	std::unique_ptr<Image> m_NormalMap;
 public:
 	Material(
 		const std::string& albedo_path, 
 		const std::string& roughness_path, 
-		const std::string& metallic_path, 
+		const std::string& metalness_path,
 		const std::string& height_path, 
 		const std::string& normal_path);
-
-
 };
 
 class Mesh {
@@ -40,7 +41,8 @@ private:
 
 	glm::mat4 m_ModelMatrix;
 public:
-	Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, Material* material);
+	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material* material);
+	~Mesh();
 
 	const std::vector<Vertex>& getVertices() const {
 		return m_Vertices;
@@ -63,6 +65,11 @@ public:
 	const std::vector<Mesh>& getMeshes() const {
 		return m_Meshes;
 	}
+
+	void LoadModel(std::string path);
+
+	void processNode(aiNode* node, const aiScene* scene);
+	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
 	void transformModel(glm::mat4 transform);
 

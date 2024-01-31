@@ -1427,27 +1427,5 @@
     <None Include="res\shaders\basic\vertex.glsl" />
     <None Include=".gitignore" />
     <None Include=".gitattributes" />
-    <None Include="ext\Win32\glew-2.1.0\bin\glew32.dll" />
-    <None Include="ext\Win32\glfw-3.3.9\LICENSE.md" />
-    <None Include="ext\Win32\glfw-3.3.9\README.md" />
-    <None Include="ext\x64\glew-2.1.0\bin\glew32.dll" />
-    <None Include="ext\x64\glfw-3.3.9\LICENSE.md" />
-    <None Include="ext\x64\glfw-3.3.9\README.md" />
-    <None Include="ext\x64\glfw-3.3.9\lib\glfw3.dll" />
-    <None Include="ext\Win32\glfw-3.3.9\lib\glfw3.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ext\Win32\glew-2.1.0\LICENSE.txt" />
-    <Text Include="ext\x64\glew-2.1.0\LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ext\x64\glew-2.1.0\lib\glew32.lib" />
-    <Library Include="ext\x64\glew-2.1.0\lib\glew32s.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3_mt.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3dll.lib" />
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3.lib" />
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3_mt.lib" />
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3dll.lib" />
   </ItemGroup>
 </Project>

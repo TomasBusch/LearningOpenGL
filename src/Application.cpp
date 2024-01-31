@@ -87,64 +87,15 @@ int Application::Init(const std::string windowName) {
 }
 
 int Application::Run() {
+    const unsigned int MAX_VERTICES = pow(2, 12);
+    const unsigned int MAX_INDICES = MAX_VERTICES;
 
-    Vertex vertices[24] = {
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //0
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //1
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //2
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //3
-                                                                                                                                                  
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //4
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //5
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //6
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //7
-                                                                                                                                                  
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //8
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //9
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //10
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //11
-                                                                                                                                                  
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //12
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //13
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //14
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //15
-                                                                                                                                                  
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //16
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //17
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //18
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //19
-                                                                                                                                                  
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f), glm::float32(0)}, //20
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f), glm::float32(0)}, //21
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f), glm::float32(0)}, //22
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec4(0.0f, 0.0f, 1.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f), glm::float32(0)}, //23
-    };
-
-    unsigned int indices[36] = {
-        3, 2, 0,
-        0, 1, 2,
-
-        7, 6, 4,
-        4, 5, 6,
-
-        11, 10, 8,
-        8, 9, 10,
-
-        15, 14, 12,
-        12, 13, 14,
-
-        19, 18, 16,
-        16, 17, 18,
-
-        23, 22, 20,
-        20, 21, 22,
-    };
+    Model* cube = new Model("res/obj/cube.obj");
 
     /* Init vertex array obj */
     VertexArray* m_VertexArray = new VertexArray();
     /* Create and asign data to vertex buffer */
-    VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, 24 * sizeof(Vertex));
-    //VertexBuffer* m_VertexBuffer = new VertexBuffer(vertices, 4 * sizeof(Vertex));
+    VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, MAX_VERTICES * sizeof(Vertex));
     /* Init vertex layout */
     VertexBufferLayout* m_VertexBufferLayout = new VertexBufferLayout();
     /* Create layout */
@@ -152,14 +103,13 @@ int Application::Run() {
     m_VertexBufferLayout->Push<glm::vec4>(1, (const void*)offsetof(Vertex, Color));
     m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Normal));
     m_VertexBufferLayout->Push<glm::vec2>(1, (const void*)offsetof(Vertex, UV));
-    m_VertexBufferLayout->Push<glm::float32>(1, (const void*)offsetof(Vertex, TextureID));
+    m_VertexBufferLayout->Push<glm::float32>(1, (const void*)offsetof(Vertex, MaterialID));
 
     /* Bind vertex buffer to layout */
     m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 
     /* Create and asign data to vertex index buffer */
-    IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, 36);
-    //IndexBuffer* m_IndexBuffer = new IndexBuffer(indices, 6);
+    IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, MAX_INDICES);
 
     Shader* m_Shader = new Shader("res/shaders/basic");
 
@@ -172,23 +122,23 @@ int Application::Run() {
     m_Shader->SetUniform1i("material.specular", 1);
     m_Shader->SetUniform1f("material.shininess", 32.0f);
 
-    m_Shader->SetUniform3f("DirectionalLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-    m_Shader->SetUniform3f("DirectionalLight.ambient"  , glm::vec3( 0.2f,  0.2f,  0.2f));
-    m_Shader->SetUniform3f("DirectionalLight.diffuse"  , glm::vec3( 0.5f,  0.5f,  0.5f));
-    m_Shader->SetUniform3f("DirectionalLight.specular" , glm::vec3( 1.0f,  1.0f,  1.0f));
+    m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3( 0.2f,  0.2f,  0.2f));
+    m_Shader->SetUniform3f("dirLight.diffuse"  , glm::vec3( 0.5f,  0.5f,  0.5f));
+    m_Shader->SetUniform3f("dirLight.specular" , glm::vec3( 1.0f,  1.0f,  1.0f));
 
     for (int i = 0; i < 4; i++) {
         if (i == 0) {
             m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
         }
         if (i == 1) {
-            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-0.7f, 0.2f, 2.0f));
         }
         if (i == 2) {
-            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(1.7f, 2.2f, 2.0f));
         }
         if (i == 3) {
-            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+            m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-1.7f, 0.2f, -2.0f));
         }
         m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
         m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
@@ -253,16 +203,16 @@ int Application::Run() {
 
         processInput(m_Window, deltaTime);
 
-        /* Modify vertex data here */
-        vertices[0].Color = glm::vec4(slider, 1.0f);
+        ///* Modify vertex data here */
+        //vertices[0].Color = glm::vec4(slider, 1.0f);
 
         /* Set dynamic Vertex Buffer Data*/
-        m_VertexBuffer->SetData(0, sizeof(vertices), vertices);
+        m_VertexBuffer->SetData(0, sizeof(Vertex) * cube->getMeshes().at(0).getVertices().size(), cube->getMeshes().at(0).getVertices().data());
 
         /* Modify index data here */
 
         /* Set dynamic Index Buffer Data*/
-        m_IndexBuffer->SetData(0, sizeof(indices), indices);
+        m_IndexBuffer->SetData(0, sizeof(unsigned int) * cube->getMeshes().at(0).getIndices().size(), cube->getMeshes().at(0).getIndices().data());
 
         m_Renderer.Clear();
 

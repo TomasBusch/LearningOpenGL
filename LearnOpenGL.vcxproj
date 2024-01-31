@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -26,19 +18,6 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -57,12 +36,6 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -70,25 +43,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
-    <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
-    <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
-    <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)build\bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)build\intermediates\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir)src\vendor;$(SolutionDir)src\vendor\imgui;$(SolutionDir)ext\include</IncludePath>
-    <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)ext\assimp-5.3.1\lib;$(SolutionDir)ext\glew-2.1.0\lib;$(SolutionDir)ext\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,40 +57,6 @@
     <LibraryPath>$(SolutionDir)ext\$(Platform)\glew-2.1.0\lib;$(SolutionDir)ext\$(Platform)\glfw-3.3.9\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>$(VC_SourcePath);$(SolutionDir)src</SourcePath>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <EntryPointSymbol>
-      </EntryPointSymbol>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
-    <Link>
-      <SubSystem>Console</SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
-      <EntryPointSymbol>
-      </EntryPointSymbol>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -142,9 +67,10 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zlibstaticd.lib;assimp-vc143-mtd.lib;glew32s.lib;glfw3.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -191,6 +117,7 @@
     <ClCompile Include="src\VertexBufferLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ext\include\assimp\config.h" />
     <ClInclude Include="ext\include\GLEW\eglew.h" />
     <ClInclude Include="ext\include\GLEW\glew.h" />
     <ClInclude Include="ext\include\GLEW\glxew.h" />
@@ -505,14 +432,6 @@
   <ItemGroup>
     <None Include=".gitattributes" />
     <None Include=".gitignore" />
-    <None Include="ext\Win32\glew-2.1.0\bin\glew32.dll" />
-    <None Include="ext\Win32\glfw-3.3.9\lib\glfw3.dll" />
-    <None Include="ext\Win32\glfw-3.3.9\LICENSE.md" />
-    <None Include="ext\Win32\glfw-3.3.9\README.md" />
-    <None Include="ext\x64\glew-2.1.0\bin\glew32.dll" />
-    <None Include="ext\x64\glfw-3.3.9\lib\glfw3.dll" />
-    <None Include="ext\x64\glfw-3.3.9\LICENSE.md" />
-    <None Include="ext\x64\glfw-3.3.9\README.md" />
     <None Include="res\shaders\basic\fragment.glsl" />
     <None Include="res\shaders\basic\vertex.glsl" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
@@ -651,20 +570,6 @@
     <None Include="src\vendor\glm\gtx\vector_angle.inl" />
     <None Include="src\vendor\glm\gtx\vector_query.inl" />
     <None Include="src\vendor\glm\gtx\wrap.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ext\Win32\glew-2.1.0\LICENSE.txt" />
-    <Text Include="ext\x64\glew-2.1.0\LICENSE.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3.lib" />
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3dll.lib" />
-    <Library Include="ext\Win32\glfw-3.3.9\lib\glfw3_mt.lib" />
-    <Library Include="ext\x64\glew-2.1.0\lib\glew32.lib" />
-    <Library Include="ext\x64\glew-2.1.0\lib\glew32s.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3dll.lib" />
-    <Library Include="ext\x64\glfw-3.3.9\lib\glfw3_mt.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
