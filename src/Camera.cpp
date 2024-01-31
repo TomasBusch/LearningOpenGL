@@ -38,7 +38,7 @@ void Camera::processKeyboard(Camera_Movement movement, float deltaTime) {
 	if (!m_Locked) {
 
 		//float velocity = MovementSpeed * deltaTime;
-		float velocity = 1 * deltaTime;
+		float velocity = 2 * deltaTime;
 		if (movement == FORWARD)
 			m_Position += m_Direction * velocity;
 		if (movement == BACKWARD)

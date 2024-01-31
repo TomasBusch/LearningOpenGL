@@ -27,5 +27,5 @@ void VertexBuffer::Unbind() const {
 void VertexBuffer::SetData(unsigned int offset, unsigned int size, const void* data) {
     /* Set dynamic Vertex Buffer Data*/
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
+    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
 }

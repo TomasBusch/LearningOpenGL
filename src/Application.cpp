@@ -1,6 +1,8 @@
 #include "Application.h"
 
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/backends/imgui_impl_glfw.h"
@@ -10,6 +12,7 @@
 #include "Texture.h"
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "Batch.h"
 
 Application::Application()
     : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer()), m_Camera(Camera(960, 512))
@@ -37,6 +40,9 @@ int Application::Init(const std::string windowName) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    //For MSAA anti-aliasing
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     /* Create a windowed mode window and its OpenGL context */
     m_Window = glfwCreateWindow(m_Width, m_Height, windowName.c_str(), NULL, NULL);
@@ -80,17 +86,59 @@ int Application::Init(const std::string windowName) {
     GLCall(glBlendEquation(GL_FUNC_ADD));
 
     GLCall(glEnable(GL_DEPTH_TEST));
+
     glfwSetInputMode(m_Window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
     glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CW);
+
+    //For anti-aliasing
+    glEnable(GL_MULTISAMPLE);
+
+    //Enable gamma correction
+    glEnable(GL_FRAMEBUFFER_SRGB);
+
 
     return 0;
 }
 
 int Application::Run() {
-    const unsigned int MAX_VERTICES = pow(2, 12);
+    const unsigned int MAX_VERTICES = pow(2, 15);
     const unsigned int MAX_INDICES = MAX_VERTICES;
 
-    Model* cube = new Model("res/obj/cube.obj");
+    Batch batch(MAX_VERTICES, MAX_INDICES);
+
+    srand(static_cast <unsigned> (time(0)));
+    float positionx   = 0.0f;
+    float positiony   = 0.0f;
+    float positionz   = 0.0f;
+    float rotationamp = 0.0f;
+    float rotationx   = 0.0f;
+    float rotationy   = 0.0f;
+    float rotationz   = 0.0f;
+
+    for (int i = 0; i < 100; i++) {
+        Model* model = new Model("res/obj/monkey.obj");
+
+        positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        positionz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        rotationamp = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX / 360))- 180);
+        rotationx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+        rotationy = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+        rotationz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+
+
+        model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
+        model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
+
+        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+
+        batch.addModel(model);
+    }
 
     /* Init vertex array obj */
     VertexArray* m_VertexArray = new VertexArray();
@@ -120,10 +168,10 @@ int Application::Run() {
     textureSpecular->Bind(1);
     m_Shader->SetUniform1i("material.diffuse", 0);
     m_Shader->SetUniform1i("material.specular", 1);
-    m_Shader->SetUniform1f("material.shininess", 32.0f);
+    m_Shader->SetUniform1f("material.shininess", 128.0f);
 
     m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-    m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3( 0.2f,  0.2f,  0.2f));
+    m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3( 0.05f,  0.05f,  0.05f));
     m_Shader->SetUniform3f("dirLight.diffuse"  , glm::vec3( 0.5f,  0.5f,  0.5f));
     m_Shader->SetUniform3f("dirLight.specular" , glm::vec3( 1.0f,  1.0f,  1.0f));
 
@@ -144,7 +192,7 @@ int Application::Run() {
         m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
         m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
 
-        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
         m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
         m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
     }
@@ -176,13 +224,9 @@ int Application::Run() {
     glfwSetCursorPosCallback(m_Window, mouse_callback);
     glfwSetScrollCallback(m_Window, scroll_callback);
     
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
 
     glm::vec3 slider = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec4 ambientLightColor = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
-    glm::vec4 pointLightColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-
-    glm::vec3 pointLightPos = glm::vec3(1.0f, 1.0f, 1.0f);
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -206,13 +250,13 @@ int Application::Run() {
         ///* Modify vertex data here */
         //vertices[0].Color = glm::vec4(slider, 1.0f);
 
-        /* Set dynamic Vertex Buffer Data*/
-        m_VertexBuffer->SetData(0, sizeof(Vertex) * cube->getMeshes().at(0).getVertices().size(), cube->getMeshes().at(0).getVertices().data());
+        ///* Set dynamic Vertex Buffer Data*/
+        //m_VertexBuffer->SetData(0, sizeof(Vertex) * cube->getMeshes().at(0).getVertices().size(), cube->getMeshes().at(0).getVertices().data());
 
-        /* Modify index data here */
+        ///* Modify index data here */
 
-        /* Set dynamic Index Buffer Data*/
-        m_IndexBuffer->SetData(0, sizeof(unsigned int) * cube->getMeshes().at(0).getIndices().size(), cube->getMeshes().at(0).getIndices().data());
+        ///* Set dynamic Index Buffer Data*/
+        //m_IndexBuffer->SetData(0, sizeof(unsigned int) * cube->getMeshes().at(0).getIndices().size(), cube->getMeshes().at(0).getIndices().data());
 
         m_Renderer.Clear();
 
@@ -225,15 +269,20 @@ int Application::Run() {
         m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
         m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
 
-        m_Shader->SetUniform3f("spotLight.ambient",  glm::vec3(0.1f, 0.1f, 0.1f));
-        m_Shader->SetUniform3f("spotLight.diffuse",  glm::vec3(0.8f, 0.8f, 0.8f));
+        m_Shader->SetUniform3f("spotLight.ambient",  glm::vec3(0.0f, 0.0f, 0.0f));
+        m_Shader->SetUniform3f("spotLight.diffuse",  glm::vec3(1.0f, 1.0f, 1.0f));
         m_Shader->SetUniform3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
         m_Shader->SetUniform1f("spotLight.constant", 1.0f);
         m_Shader->SetUniform1f("spotLight.linear", 0.09f);
         m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
 
+        batch.begin();
 
-        m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+        while (!batch.isEmpty()) {
+            batch.generateDrawQueue();
+            batch.generateBatch(*m_VertexBuffer, *m_IndexBuffer);
+            m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+        }
 
         ImGUIMenu(slider);
 
