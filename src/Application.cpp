@@ -90,7 +90,7 @@ int Application::Init(const std::string windowName) {
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    glFrontFace(GL_CW);
+    glFrontFace(GL_CCW);
 
     //For anti-aliasing
     glEnable(GL_MULTISAMPLE);
@@ -117,8 +117,8 @@ int Application::Run() {
     float rotationy   = 0.0f;
     float rotationz   = 0.0f;
 
-    for (int i = 0; i < 100; i++) {
-        Model* model = new Model("res/obj/smooth_sphere.obj");
+    for (int i = 0; i < 1; i++) {
+        Model* model = new Model("res/obj/cube.obj");
 
         positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
         positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
@@ -128,14 +128,32 @@ int Application::Run() {
         rotationy = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
         rotationz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
 
-        model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
-        model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
+        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
+        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
 
-        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
-        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+        model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+        model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 
         batch.addModel(model);
     }
+
+    //Model* cube1 = new Model("res/obj/cube.obj");
+    //cube1->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 1.0f)));
+    //cube1->transformModel(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+    //batch.addModel(cube1);
+    //Model* cube2 = new Model("res/obj/cube.obj");
+    //cube2->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 1.0f)));
+    //cube2->transformModel(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+    //batch.addModel(cube2);
+    //Model* cube3 = new Model("res/obj/cube.obj");
+    //cube3->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, -1.0f)));
+    //cube3->transformModel(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+    //batch.addModel(cube3);
+    //Model* cube4 = new Model("res/obj/cube.obj");
+    //cube4->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.0f)));
+    //cube4->transformModel(glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f)));
+    //batch.addModel(cube4);
+
 
     /* Init vertex array obj */
     VertexArray* m_VertexArray = new VertexArray();
@@ -276,6 +294,10 @@ int Application::Run() {
         m_Shader->SetUniform1f("spotLight.constant", 1.0f);
         m_Shader->SetUniform1f("spotLight.linear", 0.09f);
         m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
+
+        std::cout << m_Camera.getPosition().x << " / "
+            << m_Camera.getPosition().y << " / "
+            << m_Camera.getPosition().z << std::endl;
 
         batch.begin();
 

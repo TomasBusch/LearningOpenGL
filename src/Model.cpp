@@ -138,16 +138,15 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 		glm::vec3 position;
 		position.x = mesh->mVertices[i].x;
-		position.y = mesh->mVertices[i].z;
-		position.z = mesh->mVertices[i].y;
+		position.y = mesh->mVertices[i].y;
+		position.z = mesh->mVertices[i].z;
 
 		vertex.Position = position;
 
-		//The order is right opengl just has different order for normals
 		glm::vec3 normals;
 		normals.x = mesh->mNormals[i].x;
-		normals.y = mesh->mNormals[i].z;
-		normals.z = mesh->mNormals[i].y;
+		normals.y = mesh->mNormals[i].y;
+		normals.z = mesh->mNormals[i].z;
 
 		vertex.Normal = normals;
 
