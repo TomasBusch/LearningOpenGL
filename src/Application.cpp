@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <chrono>
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/backends/imgui_impl_glfw.h"
@@ -78,9 +79,6 @@ int Application::Init(const std::string windowName) {
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();
 
-    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
     GLCall(glBlendEquation(GL_FUNC_ADD));
@@ -105,7 +103,7 @@ int Application::Init(const std::string windowName) {
 }
 
 int Application::Run() {
-    const unsigned int MAX_VERTICES = pow(2, 15);
+    const unsigned int MAX_VERTICES = pow(2, 20);
     const unsigned int MAX_INDICES = MAX_VERTICES;
 
     Batch batch(MAX_VERTICES, MAX_INDICES);
@@ -120,7 +118,7 @@ int Application::Run() {
     float rotationz   = 0.0f;
 
     for (int i = 0; i < 100; i++) {
-        Model* model = new Model("res/obj/monkey.obj");
+        Model* model = new Model("res/obj/smooth_sphere.obj");
 
         positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
         positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
@@ -130,12 +128,11 @@ int Application::Run() {
         rotationy = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
         rotationz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
 
-
         model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
         model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
 
-        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
-        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
+        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 
         batch.addModel(model);
     }
@@ -170,10 +167,10 @@ int Application::Run() {
     m_Shader->SetUniform1i("material.specular", 1);
     m_Shader->SetUniform1f("material.shininess", 128.0f);
 
-    m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-    m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3( 0.05f,  0.05f,  0.05f));
-    m_Shader->SetUniform3f("dirLight.diffuse"  , glm::vec3( 0.5f,  0.5f,  0.5f));
-    m_Shader->SetUniform3f("dirLight.specular" , glm::vec3( 1.0f,  1.0f,  1.0f));
+    m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.5f, -0.5f, -0.5f));
+    m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3(0.005f, 0.005f, 0.005f));
+    m_Shader->SetUniform3f("dirLight.diffuse"  , glm::vec3(1.0f, 1.0f, 1.0f));
+    m_Shader->SetUniform3f("dirLight.specular" , glm::vec3(1.0f, 1.0f, 1.0f));
 
     for (int i = 0; i < 4; i++) {
         if (i == 0) {
@@ -193,7 +190,7 @@ int Application::Run() {
         m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
 
         m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
         m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
     }
 
@@ -223,8 +220,11 @@ int Application::Run() {
     glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
     glfwSetCursorPosCallback(m_Window, mouse_callback);
     glfwSetScrollCallback(m_Window, scroll_callback);
+
+    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
     
-    glClearColor(0.01f, 0.01f, 0.01f, 1.0f);
+    glClearColor(0.001f, 0.001f, 0.001f, 1.0f);
 
     glm::vec3 slider = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -241,6 +241,7 @@ int Application::Run() {
 
 
     while (!glfwWindowShouldClose(m_Window)) {
+
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -279,8 +280,17 @@ int Application::Run() {
         batch.begin();
 
         while (!batch.isEmpty()) {
+
+            //auto start = std::chrono::high_resolution_clock::now();
+
             batch.generateDrawQueue();
             batch.generateBatch(*m_VertexBuffer, *m_IndexBuffer);
+
+            //auto end = std::chrono::high_resolution_clock::now();
+            //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+            //std::cout << duration.count() << std::endl;
+
             m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
         }
 
@@ -312,6 +322,10 @@ void Application::processInput(GLFWwindow* window, float deltaTime) {
         m_Camera.processKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         m_Camera.processKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        m_Camera.processKeyboard(UP, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        m_Camera.processKeyboard(DOWN, deltaTime);
 }
 
 void Application::updateViewportSize(int width, int height) {
@@ -330,7 +344,7 @@ void Application::ImGUIMenu(glm::vec3& slider) {
 
     ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
 
-    ImGui::SliderFloat3("Colors", &slider.r, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SliderFloat3("Sun Rotation", &slider.r, -1.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
 
     if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
         counter++;

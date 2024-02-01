@@ -67,17 +67,17 @@ void main() {
 	vec3 norm = normalize(v_Normal);
 	vec3 viewDir = normalize(u_ViewPos - v_FragPos);
     
-    vec3 result = vec3(0.0 ,0.0 ,0.0);
+    //vec3 result = vec3(0.0 ,0.0 ,0.0);
 	// phase 1: Directional lighting
-    result = CalcDirectionalLight(dirLight, norm, viewDir);
+    //result = CalcDirectionalLight(dirLight, norm, viewDir);
     // phase 2: Point lights
     //for(int i = 0; i < NR_POINT_LIGHTS; i++){
     //    result += CalcPointLight(pointLights[i], norm, v_FragPos, viewDir);
     //}
     // phase 3: Spot light
-    result += CalcSpotLight(spotLight, v_Normal, v_FragPos, viewDir);
+    //result += CalcSpotLight(spotLight, norm, v_FragPos, viewDir);
 
-	output = vec4(result, 1.0);
+	output = vec4(viewDir, 1.0);
 };
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir) {
@@ -123,7 +123,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     
     // diffuse 
     vec3 lightDir = normalize(light.position - fragPos);
-    //lightDir = normalize(fragPos - light.position);
     vec3 halfwayDir = normalize(lightDir + viewDir);
 
     float diff = max(dot(normal, lightDir), 0.0);
@@ -132,7 +131,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir) {
     // specular
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    vec3 specular = light.specular * spec * texture(material.specular, v_UV).rgb;
+    vec3 specular = light.specular * spec * texture(material.specular, v_UV).rgb;  
     
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 

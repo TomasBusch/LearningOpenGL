@@ -436,6 +436,8 @@
     <None Include=".gitignore" />
     <None Include="res\shaders\basic\fragment.glsl" />
     <None Include="res\shaders\basic\vertex.glsl" />
+    <None Include="res\shaders\normal\fragment.glsl" />
+    <None Include="res\shaders\normal\vertex.glsl" />
     <None Include="src\vendor\glm\detail\func_common.inl" />
     <None Include="src\vendor\glm\detail\func_common_simd.inl" />
     <None Include="src\vendor\glm\detail\func_exponential.inl" />

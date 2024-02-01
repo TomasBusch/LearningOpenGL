@@ -47,6 +47,10 @@ void Camera::processKeyboard(Camera_Movement movement, float deltaTime) {
 			m_Position -= m_CameraRight * velocity;
 		if (movement == RIGHT)
 			m_Position += m_CameraRight * velocity;
+		if (movement == UP)
+			m_Position += m_CameraUp * velocity;
+		if (movement == DOWN)
+			m_Position -= m_CameraUp * velocity;
 
 		updateViewMatrix();
 		updateMVPMatrix();
@@ -132,21 +136,23 @@ void Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void Camera::unlock(GLFWwindow* window) {
-	m_Locked = false;
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	m_Locked = false;
 }
 
 void Camera::lock(GLFWwindow* window) {
-	m_Locked = true;
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	m_Locked = true;
+	m_FirstMouse = true;
 }
 
 void Camera::toggleLock(GLFWwindow* window) {
-	m_Locked = !m_Locked;
-	if (m_Locked) {
+	if (!m_Locked) {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 	else {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
+	m_FirstMouse = true;
+	m_Locked = !m_Locked;
 }

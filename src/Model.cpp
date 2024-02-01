@@ -33,7 +33,7 @@ void Mesh::transformMesh(glm::mat4 transform) {
 
 	for (auto& vertex : m_Vertices) {
 		vertex.Position = m_ModelMatrix * glm::vec4(vertex.Position, 1.0f);
-		//TODO Multiply by the inverse transpose matrix
+		//Multiply by the inverse transpose matrix
 		vertex.Normal = glm::normalize(glm::transpose(glm::inverse(m_ModelMatrix)) * glm::vec4(vertex.Normal, 0.0f));
 	}
 }
@@ -42,7 +42,7 @@ void Mesh::resetMesh() {
 	m_ModelMatrix = glm::inverse(m_ModelMatrix);
 	for (auto& vertex : m_Vertices) {
 		vertex.Position = m_ModelMatrix * glm::vec4(vertex.Position, 1.0f);
-		//TODO Multiply by the inverse transpose matrix
+		//Multiply by the inverse transpose matrix
 		vertex.Normal = glm::normalize(glm::transpose(glm::inverse(m_ModelMatrix)) * glm::vec4(vertex.Normal, 0.0f));
 	}
 	m_ModelMatrix = glm::mat4(1.0f);
@@ -143,10 +143,11 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 		vertex.Position = position;
 
+		//The order is right opengl just has different order for normals
 		glm::vec3 normals;
 		normals.x = mesh->mNormals[i].x;
-		normals.y = mesh->mNormals[i].y;
-		normals.z = mesh->mNormals[i].z;
+		normals.y = mesh->mNormals[i].z;
+		normals.z = mesh->mNormals[i].y;
 
 		vertex.Normal = normals;
 
