@@ -105,7 +105,7 @@ int Application::Init(const std::string windowName) {
 }
 
 int Application::Run() {
-    const uint32_t MAX_VERTICES = pow(2, 20);
+    const uint32_t MAX_VERTICES = pow(2, 22);
     const uint32_t MAX_INDICES = MAX_VERTICES;
 
     //Batch batch(MAX_VERTICES, MAX_INDICES);
@@ -123,7 +123,7 @@ int Application::Run() {
     float rotationy   = 0.0f;
     float rotationz   = 0.0f;
 
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 100; i++) {
         Model* model = new Model("res/obj/monkey.obj");
 
         positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);

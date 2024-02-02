@@ -63,9 +63,9 @@ Scene::Scene(uint32_t width, uint32_t height, uint32_t max_vertices, uint32_t ma
 }
 
 Scene::~Scene() {
-	for (auto& batch : m_Batches) {
-		delete batch;
-	}
+	//for (auto& batch : m_Batches) {
+	//	delete batch;
+	//}
 }
 
 void Scene::addModel(Model* model) {
@@ -93,7 +93,7 @@ void Scene::draw() {
 	batchModels();
 
 	for (auto& batch : m_Batches) {
-		batch->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
+		batch.get()->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 	}
 }
@@ -109,7 +109,9 @@ void Scene::batchModels() {
 
 		while (!m_ModelsQueue.empty()) {
 
-			Batch* batch = new Batch();
+			//m_Batches.emplace_back(std::make_unique<Batch>());
+			//auto& batch = m_Batches.back();
+			auto batch = std::make_unique<Batch>();
 
 			uint32_t vertex_count = 0;
 			uint32_t index_count = 0;
@@ -148,7 +150,7 @@ void Scene::batchModels() {
 			//TODO test making this multi threaded
 			batch->generateBatch();
 
-			m_Batches.emplace_back(batch);
+			m_Batches.emplace_back(std::move(batch));
 
 			has_Changed = false;
 		}

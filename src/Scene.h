@@ -16,7 +16,7 @@ private:
 	uint32_t MAX_INDICES;
 
 	std::vector<std::pair<bool, Model*>> m_Models;
-	std::vector<Batch*> m_Batches;
+	std::vector<std::unique_ptr<Batch>> m_Batches;
 	std::vector<std::pair<bool, Model*>> m_ModelsQueue;
 	bool has_Changed;
 
