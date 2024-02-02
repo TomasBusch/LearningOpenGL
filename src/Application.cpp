@@ -123,7 +123,7 @@ int Application::Run() {
     float rotationy   = 0.0f;
     float rotationz   = 0.0f;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1000; i++) {
         Model* model = new Model("res/obj/monkey.obj");
 
         positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
@@ -137,77 +137,17 @@ int Application::Run() {
         model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
         model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
 
-        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f)));
-        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
-
         scene->addModel(model);
     }
-
-    ///* Init vertex array obj */
-    //VertexArray* m_VertexArray = new VertexArray();
-    ///* Create and asign data to vertex buffer */
-    //VertexBuffer* m_VertexBuffer = new VertexBuffer(nullptr, MAX_VERTICES * sizeof(Vertex));
-    ///* Init vertex layout */
-    //VertexBufferLayout* m_VertexBufferLayout = new VertexBufferLayout();
-    ///* Create layout */
-    //m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Position));
-    //m_VertexBufferLayout->Push<glm::vec4>(1, (const void*)offsetof(Vertex, Color));
-    //m_VertexBufferLayout->Push<glm::vec3>(1, (const void*)offsetof(Vertex, Normal));
-    //m_VertexBufferLayout->Push<glm::vec2>(1, (const void*)offsetof(Vertex, UV));
-    //m_VertexBufferLayout->Push<glm::float32>(1, (const void*)offsetof(Vertex, MaterialID));
-
-    ///* Bind vertex buffer to layout */
-    //m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
-
-    ///* Create and asign data to vertex index buffer */
-    //IndexBuffer* m_IndexBuffer = new IndexBuffer(nullptr, MAX_INDICES);
-
-    //Shader* m_Shader = new Shader("res/shaders/basic");
 
     Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
     Texture* textureSpecular = new Texture("res/textures/test/container2_specular.png");
 
     textureAlbedo->Bind(0);
     textureSpecular->Bind(1);
-    //m_Shader->SetUniform1i("material.diffuse", 0);
-    //m_Shader->SetUniform1i("material.specular", 1);
-    //m_Shader->SetUniform1f("material.shininess", 128.0f);
-
-    //m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.5f, -0.5f, -0.5f));
-    //m_Shader->SetUniform3f("dirLight.ambient"  , glm::vec3(0.005f, 0.005f, 0.005f));
-    //m_Shader->SetUniform3f("dirLight.diffuse"  , glm::vec3(1.0f, 1.0f, 1.0f));
-    //m_Shader->SetUniform3f("dirLight.specular" , glm::vec3(1.0f, 1.0f, 1.0f));
 
     CubeMap* skybox = new CubeMap("res/textures/skybox");
     skybox->Bind(2);
-    //m_Shader->SetUniform1i("skybox", 2);
-
-    //for (int i = 0; i < 4; i++) {
-    //    if (i == 0) {
-    //        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
-    //    }
-    //    if (i == 1) {
-    //        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-0.7f, 0.2f, 2.0f));
-    //    }
-    //    if (i == 2) {
-    //        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(1.7f, 2.2f, 2.0f));
-    //    }
-    //    if (i == 3) {
-    //        m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-1.7f, 0.2f, -2.0f));
-    //    }
-    //    m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-    //    m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-    //    m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
-
-    //    m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-    //    m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-    //    m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
-    //}
-
-
-    //glm::mat4 model_Matrix = glm::mat4(1.0f);
-
-    //m_Shader->SetUniformMat4f("u_Model", model_Matrix);
 
     glfwSetWindowUserPointer(m_Window, this);
 
@@ -270,39 +210,6 @@ int Application::Run() {
         //m_IndexBuffer->SetData(0, sizeof(uint32_t) * cube->getMeshes().at(0).getIndices().size(), cube->getMeshes().at(0).getIndices().data());
 
         m_Renderer.Clear();
-
-        //m_Shader->SetUniformMat4f("u_Projection", m_Camera.getProjectionMatrix());
-        //m_Shader->SetUniformMat4f("u_View", m_Camera.getViewMatrix());
-        //m_Shader->SetUniform3f("u_ViewPos", m_Camera.getPosition());
-
-        //m_Shader->SetUniform3f("spotLight.position", m_Camera.getPosition());
-        //m_Shader->SetUniform3f("spotLight.direction", m_Camera.getDirection());
-        //m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-        //m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
-
-        //m_Shader->SetUniform3f("spotLight.ambient",  glm::vec3(0.0f, 0.0f, 0.0f));
-        //m_Shader->SetUniform3f("spotLight.diffuse",  glm::vec3(1.0f, 1.0f, 1.0f));
-        //m_Shader->SetUniform3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-        //m_Shader->SetUniform1f("spotLight.constant", 1.0f);
-        //m_Shader->SetUniform1f("spotLight.linear", 0.09f);
-        //m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
-
-        //batch.begin();
-
-        //while (!batch.isEmpty()) {
-
-        //    //auto start = std::chrono::high_resolution_clock::now();
-
-        //    batch.generateDrawQueue();
-        //    batch.generateBatch(*m_VertexBuffer, *m_IndexBuffer);
-
-        //    //auto end = std::chrono::high_resolution_clock::now();
-        //    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-        //    //std::cout << duration.count() << std::endl;
-
-        //    m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
-        //}
 
         scene->draw();
 
