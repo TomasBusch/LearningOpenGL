@@ -3,7 +3,7 @@
 #include "Common.h"
 #include "Model.h"
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
+VertexBuffer::VertexBuffer(const void* data, uint32_t size) {
     /* Generate and bind vertex buffer */
     GLCall(glGenBuffers(1, &m_RendererID));
     //GLCall(glCreateBuffers(1, &m_RendererID));
@@ -24,7 +24,7 @@ void VertexBuffer::Unbind() const {
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void VertexBuffer::SetData(unsigned int offset, unsigned int size, const void* data) {
+void VertexBuffer::SetData(uint32_t offset, uint32_t size, const void* data) {
     /* Set dynamic Vertex Buffer Data*/
     glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
     glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);

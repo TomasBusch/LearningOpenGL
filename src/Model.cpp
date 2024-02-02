@@ -16,7 +16,7 @@ Material::Material(
 
 }
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material* material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material* material)
 	: m_Vertices(vertices), m_Indices(indices), m_Material(material), m_ModelMatrix(glm::mat4(1.0f))
 {
 
@@ -65,13 +65,13 @@ void Model::LoadModel(std::string path) {
 
 void Model::processNode(aiNode* node, const aiScene* scene) {
 	// process all the node's meshes (if any)
-	for (unsigned int i = 0; i < node->mNumMeshes; i++)
+	for (uint32_t i = 0; i < node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 		m_Meshes.push_back(processMesh(mesh, scene));
 	}
 	// then do the same for each of its children
-	for (unsigned int i = 0; i < node->mNumChildren; i++)
+	for (uint32_t i = 0; i < node->mNumChildren; i++)
 	{
 		processNode(node->mChildren[i], scene);
 	}
@@ -79,7 +79,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	std::vector<Vertex> vertices;
-	std::vector<unsigned int> indices;
+	std::vector<uint32_t> indices;
 	Material* material = nullptr;
 
 	float mat_index = 0.0f;
@@ -133,7 +133,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		mat_index = mesh->mMaterialIndex;
 	}
 	
-	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+	for (uint32_t i = 0; i < mesh->mNumVertices; i++) {
 		Vertex vertex;
 
 		glm::vec3 position;

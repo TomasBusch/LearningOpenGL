@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <memory>
 
 #include "Common.h"
 #include "Image.h"
@@ -8,17 +10,17 @@
 
 //TODO add bound slot member var
 
-class Texture {
+class CubeMap {
 private:
-	Image m_Image;
+	std::unique_ptr<Image> m_Images[6];
 	uint32_t m_RendererID;
-	std::string m_FilePath;
+	std::vector<std::string> m_FilePaths;
 	unsigned char* m_LocalBuffer;
 	int m_Width, m_Height, m_BPP;
 public:
-	Texture() = default;
-	Texture(const std::string& path);
-	~Texture();
+	CubeMap() = default;
+	CubeMap(const std::string& path);
+	~CubeMap();
 
 	void Bind(uint32_t slot = 0) const;
 	void Unbind() const;

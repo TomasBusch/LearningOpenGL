@@ -1,6 +1,6 @@
 #include "VertexBufferLayout.h"
 
-unsigned int VertexBufferElement::GetSizeOfType(unsigned int type) {
+uint32_t VertexBufferElement::GetSizeOfType(uint32_t type) {
 	switch (type) {
 	case GL_BYTE:           return 1;
 	case GL_UNSIGNED_BYTE:  return 1;

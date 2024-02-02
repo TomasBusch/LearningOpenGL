@@ -2,12 +2,13 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include <iostream>
 
-Camera::Camera(int width, int height)
+Camera::Camera(uint32_t width, uint32_t height)
 	:m_Position(glm::vec3(0.0f, 0.0f, 0.0f)), m_WorldUp(glm::vec3(0.0f, 1.0f, 0.0f)), m_Yaw(-90.0f), m_Pitch(0.0f), m_Roll(0.0f),
 	m_Direction(glm::vec3(0.0f, 0.0f, -1.0f)), m_FirstMouse(true), m_MouseLastX(0), m_MouseLastY(0), m_MouseSensitivity(0.5f) , m_MouseZoom(45.0f),
 	m_ViewportWidth(width), m_ViewportHeight(height),
 	m_ProjectionMatrix(glm::mat4(1.0f)), m_ViewMatrix(glm::mat4(1.0f)), m_MVPMatrix(glm::mat4(1.0f)),
-	m_Locked(false)
+	m_Locked(false),
+	m_MovSpeed(10)
 {
 	m_CameraRight = glm::normalize(glm::cross(m_WorldUp, m_Direction));
 	m_CameraUp = glm::cross(m_Direction, m_CameraRight);
@@ -38,7 +39,7 @@ void Camera::processKeyboard(Camera_Movement movement, float deltaTime) {
 	if (!m_Locked) {
 
 		//float velocity = MovementSpeed * deltaTime;
-		float velocity = 2 * deltaTime;
+		float velocity = m_MovSpeed * deltaTime;
 		if (movement == FORWARD)
 			m_Position += m_Direction * velocity;
 		if (movement == BACKWARD)
@@ -48,9 +49,9 @@ void Camera::processKeyboard(Camera_Movement movement, float deltaTime) {
 		if (movement == RIGHT)
 			m_Position += m_CameraRight * velocity;
 		if (movement == UP)
-			m_Position += m_CameraUp * velocity;
+			m_Position += m_WorldUp * velocity;
 		if (movement == DOWN)
-			m_Position -= m_CameraUp * velocity;
+			m_Position -= m_WorldUp * velocity;
 
 		updateViewMatrix();
 		updateMVPMatrix();
@@ -102,7 +103,7 @@ void Camera::updateCameraVectors() {
 	m_CameraUp = glm::normalize(glm::cross(m_CameraRight, m_Direction));
 }
 
-void Camera::setViewportSize(unsigned int width, unsigned int height) {
+void Camera::setViewportSize(uint32_t width, uint32_t height) {
 	m_ViewportWidth = width;
 	m_ViewportHeight = height;
 }

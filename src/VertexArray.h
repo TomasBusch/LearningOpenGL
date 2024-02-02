@@ -1,10 +1,11 @@
 #pragma once
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
+#include "Types.h"
 
 class VertexArray {
 private:
-	unsigned int m_RendererID;
+	uint32_t m_RendererID;
 public:
 	VertexArray();
 	~VertexArray();

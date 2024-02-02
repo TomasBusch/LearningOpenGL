@@ -1,10 +1,13 @@
 #pragma once
 
-#include "glm/glm.hpp"
 #include <array>
 #include <vector>
 #include <memory>
+
 #include "Texture.h"
+#include "Types.h"
+
+#include <glm/glm.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -36,18 +39,18 @@ public:
 class Mesh {
 private:
 	std::vector<Vertex> m_Vertices;
-	std::vector<unsigned int> m_Indices;
+	std::vector<uint32_t> m_Indices;
 	Material* m_Material;
 
 	glm::mat4 m_ModelMatrix;
 public:
-	Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, Material* material);
+	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material* material);
 	~Mesh();
 
 	const std::vector<Vertex>& getVertices() const {
 		return m_Vertices;
 	}
-	const std::vector<unsigned int>& getIndices() const {
+	const std::vector<uint32_t>& getIndices() const {
 		return m_Indices;
 	}
 

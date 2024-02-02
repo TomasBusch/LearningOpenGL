@@ -3,24 +3,21 @@
 #include "Model.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
+#include "Types.h"
 
 //TODO keep track of which elements have changed
 
 class Batch {
 private:
-	std::vector<std::pair<bool, Model*>> m_Models;
-	std::vector<std::pair<bool ,Model*>> m_ModelsQueue;
-	std::vector<Model*> m_ModelsDrawQueue;
+	std::vector<Model*> m_Models;
+
+	std::vector<Vertex> m_Vertices;
+	std::vector<uint32_t> m_Indices;
+
 	bool is_Empty;
 	bool has_Changed;
-
-	const unsigned int MAX_VERTICES;
-	const unsigned int MAX_INDICES;
 public:
 	Batch();
-	Batch(unsigned int MAX_VERTICES, unsigned int MAX_INDICES);
-
-	void addModel(Model* model);
 
 	bool isEmpty() {
 		return is_Empty;
@@ -30,7 +27,8 @@ public:
 		return has_Changed;
 	}
 
-	void begin();
-	void generateDrawQueue();
-	void generateBatch(VertexBuffer& vb, IndexBuffer& ib);
+	void addModel(Model* model);
+
+	void generateBatch();
+	void setBuffers(VertexBuffer& vb, IndexBuffer& ib);
 };

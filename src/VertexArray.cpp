@@ -17,7 +17,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 	vb.Bind();
 	const auto& elements = layout.GetElements();
 	intptr_t offset = 0;
-	for (unsigned int i = 0; i < elements.size(); i++) {
+	for (uint32_t i = 0; i < elements.size(); i++) {
 		const auto& element = elements[i];
 		/* Specify vertex attribute types */
 		GLCall(glEnableVertexAttribArray(i));

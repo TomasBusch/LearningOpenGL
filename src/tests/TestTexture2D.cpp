@@ -21,7 +21,7 @@ namespace test {
 			-50.0f,  50.0f, 0.0f, 1.0f  //3
 		};
 
-		unsigned int indices[] = {
+		uint32_t indices[] = {
 			0, 1, 2,
 			2, 3, 0
 		};

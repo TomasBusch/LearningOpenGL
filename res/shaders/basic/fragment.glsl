@@ -60,6 +60,8 @@ uniform DirectionalLight dirLight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
 
+uniform samplerCube skybox;
+
 void main() { 
 	//Add .5 to avoid interpolation and precision error changing texture ID
 	//int TextureID = int(v_TextureID + 0.5);
@@ -71,13 +73,15 @@ void main() {
 	// phase 1: Directional lighting
     result = CalcDirectionalLight(dirLight, norm, viewDir);
     // phase 2: Point lights
-    //for(int i = 0; i < NR_POINT_LIGHTS; i++){
-    //    result += CalcPointLight(pointLights[i], norm, v_FragPos, viewDir);
-    //}
+    for(int i = 0; i < NR_POINT_LIGHTS; i++){
+        result += CalcPointLight(pointLights[i], norm, v_FragPos, viewDir);
+    }
     // phase 3: Spot light
     result += CalcSpotLight(spotLight, v_Normal, v_FragPos, viewDir);
 
 	output = vec4(result, 1.0);
+
+    //output = texture(skybox, v_Normal);
 };
 
 vec3 CalcDirectionalLight(DirectionalLight light, vec3 normal, vec3 viewDir) {

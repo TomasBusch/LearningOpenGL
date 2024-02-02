@@ -3,6 +3,7 @@
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
+#include "Types.h"
 
 class Renderer {
 public:

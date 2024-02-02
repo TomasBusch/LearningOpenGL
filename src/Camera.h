@@ -1,6 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
+#include "Types.h"
 
 enum Camera_Movement {
 	FORWARD,
@@ -34,8 +35,8 @@ private:
 	//Mouse
 	glm::float32 m_MouseSensitivity;
 	bool m_FirstMouse;
-	unsigned int m_ViewportWidth;
-	unsigned int m_ViewportHeight;
+	uint32_t m_ViewportWidth;
+	uint32_t m_ViewportHeight;
 	glm::float32 m_MouseLastX;
 	glm::float32 m_MouseLastY;
 	glm::float32 m_MouseZoom;
@@ -46,9 +47,12 @@ private:
 
 	bool m_Locked;
 
+	//Movement
+	uint32_t m_MovSpeed;
+
 
 public:
-	Camera(int width, int height);
+	Camera(uint32_t width, uint32_t height);
 
 	glm::mat4 getMVPMatrix() {
 		return m_MVPMatrix;
@@ -75,7 +79,7 @@ public:
 	void ProcessMouseScroll(float yoffset);
 	void updateCameraVectors();
 
-	void setViewportSize(unsigned int width, unsigned int height);
+	void setViewportSize(uint32_t width, uint32_t height);
 
 	void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 	void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);

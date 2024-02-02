@@ -5,20 +5,21 @@
 
 #include "Renderer.h"
 #include "Camera.h"
+#include "Types.h"
 
 class Application {
 private:
 	GLFWwindow* m_Window;
 	std::string m_GLSL_Version;
-	unsigned int m_Width;
-	unsigned int m_Height;
+	uint32_t m_Width;
+	uint32_t m_Height;
 
-	Camera m_Camera;
+	Camera* m_Camera;
 	Renderer m_Renderer;
 public:
 	Application();
-	Application(const std::string GLSLVersion, unsigned int width, unsigned int height);
-	Application(const std::string GLSL_Version, unsigned int width, unsigned int height, const std::string windowName);
+	Application(const std::string GLSLVersion, uint32_t width, uint32_t height);
+	Application(const std::string GLSL_Version, uint32_t width, uint32_t height, const std::string windowName);
 	int Init(const std::string windowName);
 	int Run();
 private:

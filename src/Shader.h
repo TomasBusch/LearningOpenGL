@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
 #include <unordered_map>
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
+
+#include "Types.h"
 
 struct ShaderProgramSource {
 	std::string VertexSource;
@@ -11,7 +13,7 @@ struct ShaderProgramSource {
 class Shader {
 private:
 	std::string m_FilePath;
-	unsigned int m_RendererID;
+	uint32_t m_RendererID;
 	std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
 	Shader() = default;
@@ -28,11 +30,11 @@ public:
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 	void SetUniform4f(const std::string& name, glm::vec4 values);
 	void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
-	void SetUniform1iv(const std::string& name, const unsigned int count, int values[]);
+	void SetUniform1iv(const std::string& name, const uint32_t count, int values[]);
 private:
-	unsigned int CompileShader(unsigned int type, const std::string& source);
-	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
+	uint32_t CompileShader(uint32_t type, const std::string& source);
+	uint32_t CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
 	ShaderProgramSource ReadShaders(const std::string& filepath);
 
-	unsigned int GetUniformLocation(const std::string& name);
+	uint32_t GetUniformLocation(const std::string& name);
 };
