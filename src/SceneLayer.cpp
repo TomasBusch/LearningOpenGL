@@ -1,9 +1,9 @@
-#include "Scene.h"
+#include "SceneLayer.h"
 
-Scene::Scene(uint32_t width, uint32_t height, uint32_t max_vertices, uint32_t max_indices)
+SceneLayer::SceneLayer(uint32_t width, uint32_t height, uint32_t max_vertices, uint32_t max_indices)
 	:MAX_VERTICES(max_vertices), MAX_INDICES(max_indices),
-	has_Changed(true),
-	m_Camera(Camera(width, height)),
+	has_Changed(true), has_Buffer_Changed(true),
+	m_Camera(new Camera(width, height)),
 	m_VertexArray(nullptr), m_VertexBuffer(nullptr), m_VertexBufferLayout(nullptr), m_IndexBuffer(nullptr)
 {
 	//TODO camera logic
@@ -33,8 +33,6 @@ Scene::Scene(uint32_t width, uint32_t height, uint32_t max_vertices, uint32_t ma
 	m_Shader->SetUniform3f("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
 	m_Shader->SetUniform3f("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	m_Shader->SetUniform1i("skybox", 2);
-
 	for (int i = 0; i < 4; i++) {
 		if (i == 0) {
 			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
@@ -62,24 +60,26 @@ Scene::Scene(uint32_t width, uint32_t height, uint32_t max_vertices, uint32_t ma
 	m_Shader->SetUniformMat4f("u_Model", model_Matrix);
 }
 
-Scene::~Scene() {
+SceneLayer::~SceneLayer() {
 	//for (auto& batch : m_Batches) {
 	//	delete batch;
 	//}
 }
 
-void Scene::addModel(Model* model) {
+void SceneLayer::addModel(Model* model) {
 	m_Models.emplace_back(std::make_pair(false, model));
 	has_Changed = true;
 }
 
-void Scene::draw() {
-	m_Shader->SetUniformMat4f("u_Projection", m_Camera.getProjectionMatrix());
-	m_Shader->SetUniformMat4f("u_View", m_Camera.getViewMatrix());
-	m_Shader->SetUniform3f("u_ViewPos", m_Camera.getPosition());
+void SceneLayer::onUpdate() {
+	m_Shader->Bind();
 
-	m_Shader->SetUniform3f("spotLight.position", m_Camera.getPosition());
-	m_Shader->SetUniform3f("spotLight.direction", m_Camera.getDirection());
+	m_Shader->SetUniformMat4f("u_Projection", m_Camera->getProjectionMatrix());
+	m_Shader->SetUniformMat4f("u_View", m_Camera->getViewMatrix());
+	m_Shader->SetUniform3f("u_ViewPos", m_Camera->getPosition());
+
+	m_Shader->SetUniform3f("spotLight.position", m_Camera->getPosition());
+	m_Shader->SetUniform3f("spotLight.direction", m_Camera->getDirection());
 	m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
 	m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
 
@@ -93,9 +93,13 @@ void Scene::draw() {
 	batchModels();
 
 	for (auto& batch : m_Batches) {
-		batch.get()->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
+		if (has_Buffer_Changed || m_Batches.size() != 1) {
+			batch.get()->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
+		}
 		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
 	}
+	has_Buffer_Changed = false;
+
 }
 
 //void Batch::begin() {
@@ -103,7 +107,7 @@ void Scene::draw() {
 //	is_Empty = false;
 //}
 
-void Scene::batchModels() {
+void SceneLayer::batchModels() {
 	if (has_Changed) {
 		m_ModelsQueue = m_Models;
 
@@ -133,6 +137,10 @@ void Scene::batchModels() {
 					modelPair.first = true;
 				}
 				else {
+					if (temp_v_count == 0) {
+						modelPair.first = true;
+						std::cout << "Model too big" << std::endl;
+					}
 					vertex_count = temp_v_count;
 					index_count = temp_i_count;
 				}
@@ -153,6 +161,7 @@ void Scene::batchModels() {
 			m_Batches.emplace_back(std::move(batch));
 
 			has_Changed = false;
+			has_Buffer_Changed = true;
 		}
 	}
 }

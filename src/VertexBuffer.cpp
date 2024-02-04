@@ -1,6 +1,6 @@
-#include "VertexBuffer.h"
-
 #include "Common.h"
+
+#include "VertexBuffer.h"
 #include "Model.h"
 
 VertexBuffer::VertexBuffer(const void* data, uint32_t size) {
@@ -9,7 +9,7 @@ VertexBuffer::VertexBuffer(const void* data, uint32_t size) {
     //GLCall(glCreateBuffers(1, &m_RendererID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
     /* Copy data to buffer */
-    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
 }
 
 VertexBuffer::~VertexBuffer() {
@@ -26,6 +26,6 @@ void VertexBuffer::Unbind() const {
 
 void VertexBuffer::SetData(uint32_t offset, uint32_t size, const void* data) {
     /* Set dynamic Vertex Buffer Data*/
-    glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
-    glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
+    GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, size, data));
 }

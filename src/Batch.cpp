@@ -1,6 +1,5 @@
 #include "Batch.h"
 #include <iostream>
-#include <chrono>
 
 Batch::Batch()
 	:is_Empty(true), has_Changed(true)

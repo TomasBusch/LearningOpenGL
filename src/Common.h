@@ -67,6 +67,7 @@ glDebugMessageCallback(errorOccurredGL, NULL);
     ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 #else
 #define GLCall(x) x
+#define ASSERT(x) 
 #endif // _DEBUG
 
 

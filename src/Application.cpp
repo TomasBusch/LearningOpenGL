@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <chrono>
 
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/backends/imgui_impl_glfw.h"
@@ -12,10 +11,11 @@
 #include "Model.h"
 #include "Texture.h"
 #include "CubeMap.h"
-#include "Scene.h"
+#include "SceneLayer.h"
 
 #include "glm/gtc/matrix_transform.hpp"
 #include "Batch.h"
+#include "SkyboxLayer.h"
 
 Application::Application()
     : m_GLSL_Version("#version 150"), m_Window(nullptr), m_Width(960), m_Height(512), m_Renderer(Renderer()), m_Camera(new Camera(960, 512))
@@ -105,14 +105,16 @@ int Application::Init(const std::string windowName) {
 }
 
 int Application::Run() {
-    const uint32_t MAX_VERTICES = pow(2, 22);
+    const uint32_t MAX_VERTICES = 150000;
     const uint32_t MAX_INDICES = MAX_VERTICES;
 
-    //Batch batch(MAX_VERTICES, MAX_INDICES);
-    Scene* scene = new Scene(m_Width, m_Height, MAX_VERTICES, MAX_INDICES);
+    SceneLayer* sceneLayer = new SceneLayer(m_Width, m_Height, MAX_VERTICES, MAX_INDICES);
+    SkyboxLayer* skyLayer = new SkyboxLayer();
 
     //this is a hack will rework later
-    m_Camera = scene->getCamera();
+    m_Camera = new Camera(m_Width, m_Height);
+    sceneLayer->m_Camera = m_Camera;
+    skyLayer->m_Camera = m_Camera;
 
     srand(static_cast <unsigned> (time(0)));
     float positionx   = 0.0f;
@@ -124,7 +126,7 @@ int Application::Run() {
     float rotationz   = 0.0f;
 
     for (int i = 0; i < 100; i++) {
-        Model* model = new Model("res/obj/monkey.obj");
+        Model* model = new Model("res/obj/cube.obj");
 
         positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
         positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
@@ -137,7 +139,7 @@ int Application::Run() {
         model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
         model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
 
-        scene->addModel(model);
+        sceneLayer->addModel(model);
     }
 
     Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
@@ -145,9 +147,6 @@ int Application::Run() {
 
     textureAlbedo->Bind(0);
     textureSpecular->Bind(1);
-
-    CubeMap* skybox = new CubeMap("res/textures/skybox");
-    skybox->Bind(2);
 
     glfwSetWindowUserPointer(m_Window, this);
 
@@ -180,15 +179,14 @@ int Application::Run() {
 
     float deltaTime = 0.0f;	// Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
+
     auto key_callback = [](GLFWwindow* window, int key, int scancode, int action, int mods) {
         Application* instance = (Application*)glfwGetWindowUserPointer(window);
         if (key == GLFW_KEY_LEFT_CONTROL && action == GLFW_RELEASE) {
             instance->m_Camera->toggleLock(window);
         }
     };
-
     glfwSetKeyCallback(m_Window, key_callback);
-
 
     while (!glfwWindowShouldClose(m_Window)) {
 
@@ -198,20 +196,10 @@ int Application::Run() {
 
         processInput(m_Window, deltaTime);
 
-        ///* Modify vertex data here */
-        //vertices[0].Color = glm::vec4(slider, 1.0f);
-
-        ///* Set dynamic Vertex Buffer Data*/
-        //m_VertexBuffer->SetData(0, sizeof(Vertex) * cube->getMeshes().at(0).getVertices().size(), cube->getMeshes().at(0).getVertices().data());
-
-        ///* Modify index data here */
-
-        ///* Set dynamic Index Buffer Data*/
-        //m_IndexBuffer->SetData(0, sizeof(uint32_t) * cube->getMeshes().at(0).getIndices().size(), cube->getMeshes().at(0).getIndices().data());
-
         m_Renderer.Clear();
 
-        scene->draw();
+        sceneLayer->onUpdate();
+        skyLayer->onUpdate();
 
         ImGUIMenu(slider);
 

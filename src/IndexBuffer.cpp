@@ -1,6 +1,7 @@
+#include "Common.h"
+
 #include "IndexBuffer.h"
 
-#include "Common.h"
 
 IndexBuffer::IndexBuffer(const void* data, uint32_t count)
     : m_Count(count) {
@@ -11,7 +12,7 @@ IndexBuffer::IndexBuffer(const void* data, uint32_t count)
     //GLCall(glCreateBuffers(1, &m_RendererID));
     GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
     /* Copy data to buffer */
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_STREAM_DRAW));
+    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), data, GL_DYNAMIC_DRAW));
 }
 
 IndexBuffer::~IndexBuffer() {
@@ -27,8 +28,8 @@ void IndexBuffer::Unbind() const{
 }
 
 void IndexBuffer::SetData(uint32_t offset, uint32_t size, const void* data) {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
-    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data);
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID));
+    GLCall(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset, size, data));
 
     m_Count = size / sizeof(uint32_t);
 }

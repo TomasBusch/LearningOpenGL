@@ -10,7 +10,7 @@ private:
 	int m_Width, m_Height, m_BPP;
 public:
 	Image() = default;
-	Image(const std::string& path);
+	Image(const std::string& path, int flip = 1);
 	~Image();
 
 	unsigned char* getDataBuffer() const {

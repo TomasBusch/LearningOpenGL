@@ -5,21 +5,21 @@
 CubeMap::CubeMap(const std::string& path)
 	:m_RendererID(0), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
 {
+	GLCall(glGenTextures(1, &m_RendererID));
+	//GLCall(glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
+
 	for (int i = 0; i < 6; i++) {
 		m_FilePaths.push_back(path + "/" + std::to_string(i) + ".jpg");
 	}
 
-	for (uint32_t i = 0; i < m_FilePaths.size(); i++)
-	{
-		m_Images[i] = std::make_unique<Image>(m_FilePaths[i]);
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB_ALPHA, 
-			m_Images[i].get()->getWidth(), m_Images[i].get()->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 
-			m_Images[i].get()->getDataBuffer());
-	}
+	for (uint32_t j = 0; j < m_FilePaths.size(); j++) {
 
-	GLCall(glGenTextures(1, &m_RendererID));
-	//GLCall(glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererID));
-	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererID));
+		m_Images[j] = std::make_unique<Image>(m_FilePaths[j], 0);
+		GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_RGBA8,
+			m_Images[j]->getWidth(), m_Images[j]->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
+			m_Images[j]->getDataBuffer()));
+	}
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
