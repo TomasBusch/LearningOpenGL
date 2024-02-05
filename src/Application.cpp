@@ -100,21 +100,26 @@ int Application::Init(const std::string windowName) {
     //Enable gamma correction
     glEnable(GL_FRAMEBUFFER_SRGB);
 
+    glDisable(GL_BLEND);
+
 
     return 0;
 }
 
 int Application::Run() {
-    const uint32_t MAX_VERTICES = 150000;
+    const uint32_t MAX_VERTICES = 300000;
     const uint32_t MAX_INDICES = MAX_VERTICES;
 
+    m_SRenderer = SRenderer::GetInstance(m_Width, m_Height, MAX_VERTICES, MAX_INDICES);
+
     SceneLayer* sceneLayer = new SceneLayer(m_Width, m_Height, MAX_VERTICES, MAX_INDICES);
-    SkyboxLayer* skyLayer = new SkyboxLayer();
+    //SkyboxLayer* skyLayer = new SkyboxLayer();
 
     //this is a hack will rework later
     m_Camera = new Camera(m_Width, m_Height);
     sceneLayer->m_Camera = m_Camera;
-    skyLayer->m_Camera = m_Camera;
+    //skyLayer->m_Camera = m_Camera;
+    sceneLayer->setSRenderer(m_SRenderer);
 
     srand(static_cast <unsigned> (time(0)));
     float positionx   = 0.0f;
@@ -125,28 +130,32 @@ int Application::Run() {
     float rotationy   = 0.0f;
     float rotationz   = 0.0f;
 
-    for (int i = 0; i < 100; i++) {
-        Model* model = new Model("res/obj/cube.obj");
+    //for (int i = 0; i < 1; i++) {
+        //Model* model = new Model("res/obj/monkey.obj");
 
-        positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
-        positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
-        positionz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
-        rotationamp = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX / 360))- 180);
-        rotationx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
-        rotationy = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
-        rotationz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+        //positionx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        //positiony = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        //positionz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 20)) - 10);
+        //rotationamp = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX / 360))- 180);
+        //rotationx = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+        //rotationy = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
+        //rotationz = static_cast <float> ((rand()) / (static_cast <float> (RAND_MAX   / 2)) - 1);
 
-        model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
-        model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
+        //model->transformModel(glm::translate(glm::mat4(1.0f), glm::vec3(positionx, positiony, positionz)));
+        //model->transformModel(glm::rotate(glm::mat4(1.0f), glm::radians(rotationamp), glm::vec3(rotationx, rotationy, rotationz)));
 
-        sceneLayer->addModel(model);
-    }
+        //sceneLayer->addModel(model);
+    //}
 
-    Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
-    Texture* textureSpecular = new Texture("res/textures/test/container2_specular.png");
+    Model* model2 = new Model("res/obj/sponza/sponza.obj");
+    sceneLayer->addModel(model2);
 
-    textureAlbedo->Bind(0);
-    textureSpecular->Bind(1);
+
+    //Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
+    //Texture* textureSpecular = new Texture("res/textures/test/container2_specular.png");
+
+    //textureAlbedo->Bind(0);
+    //textureSpecular->Bind(1);
 
     glfwSetWindowUserPointer(m_Window, this);
 
@@ -173,7 +182,7 @@ int Application::Run() {
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     
-    glClearColor(0.001f, 0.001f, 0.001f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glm::vec3 slider = glm::vec3(0.0f, 0.0f, 0.0f);
 
@@ -188,6 +197,7 @@ int Application::Run() {
     };
     glfwSetKeyCallback(m_Window, key_callback);
 
+
     while (!glfwWindowShouldClose(m_Window)) {
 
         float currentFrame = glfwGetTime();
@@ -196,10 +206,11 @@ int Application::Run() {
 
         processInput(m_Window, deltaTime);
 
-        m_Renderer.Clear();
+        //m_Renderer.Clear();
+        m_SRenderer->Clear();
 
         sceneLayer->onUpdate();
-        skyLayer->onUpdate();
+        //skyLayer->onUpdate();
 
         ImGUIMenu(slider);
 

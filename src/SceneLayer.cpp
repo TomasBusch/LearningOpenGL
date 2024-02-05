@@ -22,48 +22,57 @@ SceneLayer::SceneLayer(uint32_t width, uint32_t height, uint32_t max_vertices, u
 	m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 
 	//TODO make path a constructor input
-	m_Shader = std::make_unique<Shader>("res/shaders/basic");
+	//m_Shader = std::make_unique<Shader>("res/shaders/basic");
+	m_ShaderGeometry = std::make_unique<Shader>("res/shaders/deferred/geometry");
+	m_ShaderShading = std::make_unique<Shader>("res/shaders/deferred/shading");
 
-	m_Shader->SetUniform1i("material.diffuse", 0);
-	m_Shader->SetUniform1i("material.specular", 1);
-	m_Shader->SetUniform1f("material.shininess", 128.0f);
+	Texture* textureAlbedo = new Texture("res/textures/test/container2.png");
+	Texture* textureSpecular = new Texture("res/textures/test/container2_specular.png");
 
-	m_Shader->SetUniform3f("dirLight.direction", glm::vec3(-0.5f, -0.5f, -0.5f));
-	m_Shader->SetUniform3f("dirLight.ambient", glm::vec3(0.005f, 0.005f, 0.005f));
-	m_Shader->SetUniform3f("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	m_Shader->SetUniform3f("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	textureAlbedo->Bind(5);
+	textureSpecular->Bind(6);
+
+	m_ShaderGeometry->Bind();
+	m_ShaderGeometry->SetUniform1i("material.albedo", 5);
+	m_ShaderGeometry->SetUniform1i("material.roughness", 6);
+	//m_ShaderGeometry->SetUniform1f("material.shininess", 128.0f);
+	glm::mat4 model_Matrix = glm::mat4(1.0f);
+	m_ShaderGeometry->SetUniformMat4f("u_Model", model_Matrix);
+
+	m_ShaderShading->Bind();
+	m_ShaderShading->SetUniform3f("dirLight.direction", glm::vec3(-0.5f, -0.5f, -0.5f));
+	m_ShaderShading->SetUniform3f("dirLight.ambient", glm::vec3(0.005f, 0.005f, 0.005f));
+	m_ShaderShading->SetUniform3f("dirLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+	m_ShaderShading->SetUniform3f("dirLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+	m_ShaderShading->SetUniform1i("PositionBuffer", 0);
+	m_ShaderShading->SetUniform1i("NormalBuffer", 1);
+	m_ShaderShading->SetUniform1i("AlbedoRoughBuffer", 2);
 
 	for (int i = 0; i < 4; i++) {
 		if (i == 0) {
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
+			m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(0.7f, 0.2f, 2.0f));
 		}
 		if (i == 1) {
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-0.7f, 0.2f, 2.0f));
+			m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-0.7f, 0.2f, 2.0f));
 		}
 		if (i == 2) {
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(1.7f, 2.2f, 2.0f));
+			m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(1.7f, 2.2f, 2.0f));
 		}
 		if (i == 3) {
-			m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-1.7f, 0.2f, -2.0f));
+			m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].position", glm::vec3(-1.7f, 0.2f, -2.0f));
 		}
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
-		m_Shader->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
+		m_ShaderShading->SetUniform1f("pointLights[" + std::to_string(i) + "].constant", 1.0f);
+		m_ShaderShading->SetUniform1f("pointLights[" + std::to_string(i) + "].linear", 0.09f);
+		m_ShaderShading->SetUniform1f("pointLights[" + std::to_string(i) + "].quadratic", 0.032f);
 
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-		m_Shader->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+		m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].diffuse", glm::vec3(0.0f, 0.0f, 0.0f));
+		m_ShaderShading->SetUniform3f("pointLights[" + std::to_string(i) + "].specular", glm::vec3(0.0f, 0.0f, 0.0f));
 	}
-
-	glm::mat4 model_Matrix = glm::mat4(1.0f);
-
-	m_Shader->SetUniformMat4f("u_Model", model_Matrix);
 }
 
 SceneLayer::~SceneLayer() {
-	//for (auto& batch : m_Batches) {
-	//	delete batch;
-	//}
 }
 
 void SceneLayer::addModel(Model* model) {
@@ -72,40 +81,36 @@ void SceneLayer::addModel(Model* model) {
 }
 
 void SceneLayer::onUpdate() {
-	m_Shader->Bind();
+	m_ShaderGeometry->Bind();
+	m_ShaderGeometry->SetUniformMat4f("u_Projection", m_Camera->getProjectionMatrix());
+	m_ShaderGeometry->SetUniformMat4f("u_View", m_Camera->getViewMatrix());
 
-	m_Shader->SetUniformMat4f("u_Projection", m_Camera->getProjectionMatrix());
-	m_Shader->SetUniformMat4f("u_View", m_Camera->getViewMatrix());
-	m_Shader->SetUniform3f("u_ViewPos", m_Camera->getPosition());
+	m_ShaderShading->Bind();
+	m_ShaderShading->SetUniform3f("u_ViewPos", m_Camera->getPosition());
 
-	m_Shader->SetUniform3f("spotLight.position", m_Camera->getPosition());
-	m_Shader->SetUniform3f("spotLight.direction", m_Camera->getDirection());
-	m_Shader->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
-	m_Shader->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
+	m_ShaderShading->SetUniform3f("spotLight.position", m_Camera->getPosition());
+	m_ShaderShading->SetUniform3f("spotLight.direction", m_Camera->getDirection());
+	m_ShaderShading->SetUniform1f("spotLight.cutOff", glm::cos(glm::radians(15.0f)));
+	m_ShaderShading->SetUniform1f("spotLight.outerCutOff", glm::cos(glm::radians(25.0f)));
 
-	m_Shader->SetUniform3f("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
-	m_Shader->SetUniform3f("spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
-	m_Shader->SetUniform3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-	m_Shader->SetUniform1f("spotLight.constant", 1.0f);
-	m_Shader->SetUniform1f("spotLight.linear", 0.09f);
-	m_Shader->SetUniform1f("spotLight.quadratic", 0.032f);
+	m_ShaderShading->SetUniform3f("spotLight.ambient", glm::vec3(0.0f, 0.0f, 0.0f));
+	m_ShaderShading->SetUniform3f("spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+	m_ShaderShading->SetUniform3f("spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+	m_ShaderShading->SetUniform1f("spotLight.constant", 1.0f);
+	m_ShaderShading->SetUniform1f("spotLight.linear", 0.09f);
+	m_ShaderShading->SetUniform1f("spotLight.quadratic", 0.032f);
 
 	batchModels();
 
 	for (auto& batch : m_Batches) {
 		if (has_Buffer_Changed || m_Batches.size() != 1) {
-			batch.get()->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
+			batch->setBuffers(*m_VertexBuffer, *m_IndexBuffer);
 		}
-		m_Renderer.Draw(*m_VertexArray, *m_IndexBuffer, *m_Shader);
+		m_SRenderer->Draw(*m_VertexArray, *m_IndexBuffer, *m_ShaderGeometry, *m_ShaderShading);
 	}
 	has_Buffer_Changed = false;
 
 }
-
-//void Batch::begin() {
-//	m_ModelsQueue = m_Models;
-//	is_Empty = false;
-//}
 
 void SceneLayer::batchModels() {
 	if (has_Changed) {
@@ -113,8 +118,6 @@ void SceneLayer::batchModels() {
 
 		while (!m_ModelsQueue.empty()) {
 
-			//m_Batches.emplace_back(std::make_unique<Batch>());
-			//auto& batch = m_Batches.back();
 			auto batch = std::make_unique<Batch>();
 
 			uint32_t vertex_count = 0;

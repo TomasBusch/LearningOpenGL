@@ -23,9 +23,9 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material
 }
 
 Mesh::~Mesh() {
-	if (m_Material != nullptr) {
-		delete m_Material;
-	}
+	//if (m_Material != nullptr) {
+	//	delete m_Material;
+	//}
 }
 
 void Mesh::transformMesh(glm::mat4 transform) {

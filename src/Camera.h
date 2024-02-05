@@ -1,7 +1,7 @@
 #pragma once
 #include "glm/glm.hpp"
 #include "GLFW/glfw3.h"
-#include "Types.h"
+#include "pch.h"
 
 enum Camera_Movement {
 	FORWARD,

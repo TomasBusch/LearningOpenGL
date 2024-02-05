@@ -19,11 +19,9 @@ uniform mat4 u_Projection;
 
 void main() {
    gl_Position = u_Projection * u_View * u_Model * Position;
-   //gl_Position = Position;
    v_Color = Color;
    v_Normal = Normal;
    v_UV = UV;
    v_MaterialID = MaterialID;
-   //v_FragPos = vec3(u_Model * Position);
    v_FragPos = vec3(Position);
 };

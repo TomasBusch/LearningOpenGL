@@ -54,7 +54,7 @@ SkyboxLayer::SkyboxLayer()
     m_VertexBufferLayout = std::make_unique<VertexBufferLayout>();
     m_IndexBuffer = std::make_unique<IndexBuffer>(m_SkyboxIndices.data(), m_SkyboxIndices.size());
 
-    m_VertexBufferLayout->Push<glm::vec3>(1, 0);
+    m_VertexBufferLayout->Push<glm::vec3>(1, (void*)0);
 
     m_VertexArray->AddBuffer(*m_VertexBuffer, *m_VertexBufferLayout);
 

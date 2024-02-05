@@ -15,7 +15,7 @@ CubeMap::CubeMap(const std::string& path)
 
 	for (uint32_t j = 0; j < m_FilePaths.size(); j++) {
 
-		m_Images[j] = std::make_unique<Image>(m_FilePaths[j], 0);
+		m_Images[j] = std::make_unique<Image>(m_FilePaths[j], false);
 		GLCall(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_RGBA8,
 			m_Images[j]->getWidth(), m_Images[j]->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE,
 			m_Images[j]->getDataBuffer()));

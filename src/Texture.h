@@ -4,7 +4,7 @@
 
 #include "Common.h"
 #include "Image.h"
-#include "Types.h"
+#include "pch.h"
 
 //TODO add bound slot member var
 

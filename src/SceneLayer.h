@@ -6,14 +6,16 @@
 #include "Layer.h"
 
 #include "Renderer.h"
+#include "SRenderer.h"
 #include "Model.h"
 #include "Batch.h"
 #include "Camera.h"
-#include "Types.h"
+#include "pch.h"
 
 class SceneLayer : public Layer {
 private:
 	Renderer m_Renderer;
+	SRenderer* m_SRenderer;
 	uint32_t MAX_VERTICES;
 	uint32_t MAX_INDICES;
 
@@ -28,7 +30,8 @@ private:
 	std::unique_ptr<VertexBufferLayout> m_VertexBufferLayout;
 	std::unique_ptr<IndexBuffer> m_IndexBuffer;
 
-	std::unique_ptr<Shader> m_Shader;
+	std::unique_ptr<Shader> m_ShaderGeometry;
+	std::unique_ptr<Shader> m_ShaderShading;
 public:
 	//TODO Change to camera array with active camera system
 	Camera* m_Camera;
@@ -40,6 +43,10 @@ public:
 
 	Camera* getCamera() {
 		return m_Camera;
+	}
+
+	void setSRenderer(SRenderer* renderer) {
+		m_SRenderer = renderer;
 	}
 
 

@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 
 #include "Common.h"
-#include "Types.h"
+#include "pch.h"
 
 struct VertexBufferElement {
 	uint32_t type;

@@ -5,7 +5,8 @@
 
 #include "Renderer.h"
 #include "Camera.h"
-#include "Types.h"
+#include "pch.h"
+#include "SRenderer.h"
 
 class Application {
 private:
@@ -16,6 +17,7 @@ private:
 
 	Camera* m_Camera;
 	Renderer m_Renderer;
+	SRenderer* m_SRenderer;
 public:
 	Application();
 	Application(const std::string GLSLVersion, uint32_t width, uint32_t height);

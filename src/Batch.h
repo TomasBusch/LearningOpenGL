@@ -3,7 +3,7 @@
 #include "Model.h"
 #include "IndexBuffer.h"
 #include "VertexBuffer.h"
-#include "Types.h"
+#include "pch.h"
 
 //TODO keep track of which elements have changed
 
