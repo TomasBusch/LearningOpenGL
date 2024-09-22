@@ -147,7 +147,7 @@ int Application::Run() {
         //sceneLayer->addModel(model);
     //}
 
-    Model* model2 = new Model("res/obj/sponza/sponza.obj");
+    Model* model2 = new Model("res/models/sponza/sponza.obj");
     sceneLayer->addModel(model2);
 
 
@@ -256,18 +256,7 @@ void Application::ImGUIMenu(glm::vec3& slider) {
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    static int counter = 0;
-
     ImGui::Begin("Controls");                          // Create a window.
-
-    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-    ImGui::SliderFloat3("Sun Rotation", &slider.r, -1.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-
-    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-        counter++;
-    ImGui::SameLine();
-    ImGui::Text("counter = %d", counter);
 
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::End();
