@@ -113,6 +113,15 @@ ShaderProgramSource Shader::ReadShaders(const std::string& filepath) {
     std::ifstream fragmentStream(filepath + "/fragment.glsl");
     std::ifstream vertexStream(filepath + "/vertex.glsl");
 
+    if (!fragmentStream.is_open()) {
+        std::cout << "Fragment Shader not found at" << filepath << "\n";
+    }
+
+    if (!vertexStream.is_open()) {
+        std::cout << "Vertex Shader not found at" << filepath << "\n";
+    }
+
+
     std::string line;
     std::stringstream strFragmentStream;
     std::stringstream strVertexStream;
