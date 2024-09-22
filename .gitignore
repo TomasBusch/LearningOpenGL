@@ -19,6 +19,7 @@ mono_crash.*
 #Development resources
 res/obj
 res/textures
+vcpkg_installed
 
 # Build results
 [Bb]uild/
