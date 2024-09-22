@@ -9,7 +9,7 @@ VertexBuffer::VertexBuffer(const void* data, uint32_t size) {
     //GLCall(glCreateBuffers(1, &m_RendererID));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
     /* Copy data to buffer */
-    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STREAM_DRAW));
 }
 
 VertexBuffer::~VertexBuffer() {
